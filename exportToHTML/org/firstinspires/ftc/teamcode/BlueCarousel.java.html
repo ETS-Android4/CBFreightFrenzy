@@ -1,0 +1,593 @@
+<html>
+<head>
+<title>BlueCarousel.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+.s5 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BlueCarousel.java</font>
+</center></td></tr></table>
+<pre><span class="s0">///////////////////// for testing purpose</span>
+<span class="s2">package </span><span class="s1">org.firstinspires.ftc.teamcode</span><span class="s2">;</span>
+
+
+<span class="s2">import </span><span class="s1">com.qualcomm.hardware.bosch.BNO055IMU</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.Autonomous</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.LinearOpMode</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.hardware.DcMotor</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.util.ElapsedTime</span><span class="s2">;</span>
+
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.ClassFactory</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.navigation.AngleUnit</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.navigation.AxesOrder</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.navigation.AxesReference</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.navigation.Orientation</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.tfod.Recognition</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector</span><span class="s2">;</span>
+
+<span class="s2">import </span><span class="s1">java.util.List</span><span class="s2">;</span>
+
+<span class="s0">//import static org.firstinspires.ftc.teamcode.ConceptTensorFlowObjectDetectionWebcam.LABEL_FIRST_ELEMENT;</span>
+<span class="s0">//import static org.firstinspires.ftc.teamcode.ConceptTensorFlowObjectDetectionWebcam.LABELS;</span>
+<span class="s0">//import static org.firstinspires.ftc.teamcode.ConceptTensorFlowObjectDetectionWebcam.TFOD_MODEL_ASSET;</span>
+
+<span class="s0">/* 
+import org.opencv.core.Core; 
+import org.opencv.core.Mat; 
+import org.opencv.core.MatOfPoint; 
+import org.opencv.core.Point; 
+import org.opencv.core.Scalar; 
+import org.opencv.imgproc.Imgproc; 
+import org.openftc.easyopencv.OpenCvCamera; 
+import org.openftc.easyopencv.OpenCvCameraFactory; 
+import org.openftc.easyopencv.OpenCvCameraRotation; 
+import org.openftc.easyopencv.OpenCvPipeline; 
+*/</span>
+<span class="s0">//import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;</span>
+
+<span class="s1">@Autonomous(name=</span><span class="s3">&quot;BlueCarousel&quot;</span><span class="s2">, </span><span class="s1">group=</span><span class="s3">&quot;Pushbot&quot;</span><span class="s1">)</span>
+
+<span class="s2">public class </span><span class="s1">BlueCarousel </span><span class="s2">extends </span><span class="s1">LinearOpMode</span>
+<span class="s1">{</span>
+
+    <span class="s2">private static int </span><span class="s1">valQUAD = -</span><span class="s4">1</span><span class="s2">;</span>
+    <span class="s2">private static int </span><span class="s1">valSingle = -</span><span class="s4">1</span><span class="s2">;</span>
+    <span class="s2">private static int </span><span class="s1">valZero = -</span><span class="s4">1</span><span class="s2">;</span>
+
+    <span class="s2">private static float </span><span class="s1">offsetX = </span><span class="s4">.75f</span><span class="s1">/</span><span class="s4">8f</span><span class="s2">;</span><span class="s0">//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive</span>
+    <span class="s2">private static float </span><span class="s1">offsetY = </span><span class="s4">1.5f</span><span class="s1">/</span><span class="s4">8f</span><span class="s2">;</span><span class="s0">//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive</span>
+
+    <span class="s2">private static float</span><span class="s1">[] midPos = {</span><span class="s4">4f</span><span class="s1">/</span><span class="s4">8f</span><span class="s1">+offsetX</span><span class="s2">, </span><span class="s4">4f</span><span class="s1">/</span><span class="s4">8f</span><span class="s1">+offsetY}</span><span class="s2">;</span><span class="s0">//0 = col, 1 = row</span>
+    <span class="s2">private static float</span><span class="s1">[] leftPos = {</span><span class="s4">2f</span><span class="s1">/</span><span class="s4">8f</span><span class="s1">+offsetX</span><span class="s2">, </span><span class="s4">4f</span><span class="s1">/</span><span class="s4">8f</span><span class="s1">+offsetY}</span><span class="s2">;</span>
+    <span class="s2">private static float</span><span class="s1">[] rightPos = {</span><span class="s4">6f</span><span class="s1">/</span><span class="s4">8f</span><span class="s1">+offsetX</span><span class="s2">, </span><span class="s4">4f</span><span class="s1">/</span><span class="s4">8f</span><span class="s1">+offsetY}</span><span class="s2">;</span>
+
+
+    <span class="s0">//DRIVE, IMU, AND ACCEL CONSTANTS</span>
+
+    <span class="s1">BNO055IMU imu</span><span class="s2">;</span>
+    <span class="s1">Orientation lastAngles = </span><span class="s2">new </span><span class="s1">Orientation()</span><span class="s2">;</span>
+    <span class="s2">double                  </span><span class="s1">globalAngle</span><span class="s2">, </span><span class="s1">power = </span><span class="s4">.50</span><span class="s2">, </span><span class="s1">correction</span><span class="s2">, </span><span class="s1">rotation</span><span class="s2">;</span>
+    <span class="s1">PIDController           pidRotate</span><span class="s2">, </span><span class="s1">pidDrive</span><span class="s2">;</span>
+    <span class="s1">HardwareMecanum robot = </span><span class="s2">new </span><span class="s1">HardwareMecanum()</span><span class="s2">;</span>
+    <span class="s2">private </span><span class="s1">ElapsedTime runtime = </span><span class="s2">new </span><span class="s1">ElapsedTime()</span><span class="s2">;</span>
+    <span class="s2">static final double </span><span class="s1">COUNTS_PER_MOTOR_REV = </span><span class="s4">2150 </span><span class="s2">;    </span><span class="s0">//ANDYMARK Motor Encoder ticks</span>
+    <span class="s2">static final double </span><span class="s1">DRIVE_GEAR_REDUCTION = </span><span class="s4">1.0</span><span class="s2">;</span>
+    <span class="s2">static final double </span><span class="s1">WHEEL_DIAMETER_INCHES = </span><span class="s4">3.77 </span><span class="s2">;</span>
+    <span class="s2">static final double </span><span class="s1">COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * </span><span class="s4">3.1415</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s2">static  double </span><span class="s1">DRIVE_SPEED = </span><span class="s4">0.9</span><span class="s2">;</span>
+    <span class="s2">static final double </span><span class="s1">TURN_SPEED = </span><span class="s4">0.575</span><span class="s2">;</span>
+    <span class="s1">LogisticFunction function</span><span class="s2">;</span>
+
+
+    <span class="s2">double </span><span class="s1">servoStartingPosition = </span><span class="s4">0.5</span><span class="s2">;</span>
+
+    <span class="s2">double </span><span class="s1">distanceBetweenBlocks = </span><span class="s4">9.5</span><span class="s2">;</span>
+
+
+    <span class="s0">//boolean center;</span>
+
+    <span class="s2">boolean </span><span class="s1">left</span><span class="s2">;</span>
+
+    <span class="s2">boolean </span><span class="s1">right</span><span class="s2">;</span>
+
+
+    <span class="s2">boolean </span><span class="s1">targetVisible</span><span class="s2">;</span>
+
+    <span class="s2">double </span><span class="s1">blockPosition</span><span class="s2">;</span>
+
+    <span class="s2">boolean </span><span class="s1">values[] = </span><span class="s2">new boolean</span><span class="s1">[</span><span class="s4">3</span><span class="s1">]</span><span class="s2">;</span>
+
+    <span class="s1">String positionArray[] = </span><span class="s2">null;</span>
+
+
+    <span class="s0">//for 90 degrees</span>
+    <span class="s0">//bigger turn = 26.5</span>
+    <span class="s0">//smaller turn = 21.6</span>
+    <span class="s2">private </span><span class="s1">VuforiaLocalizer vuforia</span><span class="s2">;</span>
+    <span class="s2">private </span><span class="s1">TFObjectDetector tfod</span><span class="s2">;</span>
+    <span class="s1">String VUFORIA_KEY =</span>
+            <span class="s3">&quot;  ARGKFNf/////AAABmeWmTIKr70aQrGH7lC6M8xBPdcMfnaNjD/dopWNwdsWuQbrZLFQZZBr/eFBlpHuykY0IY4f9Y34OVFaL4NRxmFd4ghxNkwK3Cjl/4Jo6bf/v+ovD7Tqdf8cT0A3McQF2rxOPE8fsmaC2TfCr8nZquqbbaTZT7bxtuvi8skuLfHg0BNRGaKtEYyPaJ+wdvAcJZ8+2rZ6q+77Ooh2teMYGmJRe+KDD8LmIMn5Jh/r/Lbm9WqjmxuSV6NxwAwpqTPydgJAE/19fXRVbC4+vGWAiiAxd/UIrLxDtgwekkiudCLSa1r1Y8XjtaTeUUWYXl7+iAxkAOX3ZYa84fFrPGnFvYdhjnIuRGo4AgL6dvb/pQEaK &quot;</span><span class="s2">;</span>
+    <span class="s2">private void </span><span class="s1">initVuforia() {</span>
+        <span class="s0">/* 
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine. 
+x         */</span>
+        <span class="s1">VuforiaLocalizer.Parameters parameters = </span><span class="s2">new </span><span class="s1">VuforiaLocalizer.Parameters()</span><span class="s2">;</span>
+
+        <span class="s1">parameters.vuforiaLicenseKey = VUFORIA_KEY</span><span class="s2">;</span>
+        <span class="s1">parameters.cameraName = hardwareMap.get(WebcamName.</span><span class="s2">class, </span><span class="s3">&quot;Webcam 1&quot;</span><span class="s1">)</span><span class="s2">;</span>
+
+        <span class="s0">//  Instantiate the Vuforia engine</span>
+        <span class="s1">vuforia = ClassFactory.getInstance().createVuforia(parameters)</span><span class="s2">;</span>
+
+        <span class="s0">// Loading trackables is not necessary for the TensorFlow Object Detection engine.</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/**</span>
+     <span class="s5">* Initialize the TensorFlow Object Detection engine.</span>
+     <span class="s5">*/</span>
+    <span class="s2">private void </span><span class="s1">initTfod() {</span>
+        <span class="s2">int </span><span class="s1">tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(</span>
+                <span class="s3">&quot;tfodMonitorViewId&quot;</span><span class="s2">, </span><span class="s3">&quot;id&quot;</span><span class="s2">, </span><span class="s1">hardwareMap.appContext.getPackageName())</span><span class="s2">;</span>
+        <span class="s1">TFObjectDetector.Parameters tfodParameters = </span><span class="s2">new </span><span class="s1">TFObjectDetector.Parameters(tfodMonitorViewId)</span><span class="s2">;</span>
+        <span class="s1">tfodParameters.minResultConfidence = </span><span class="s4">0.8f</span><span class="s2">;</span>
+        <span class="s1">tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters</span><span class="s2">, </span><span class="s1">vuforia)</span><span class="s2">;</span>
+       <span class="s0">// tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);</span>
+
+        <span class="s0">//if ()</span>
+
+    <span class="s1">}</span>
+    <span class="s1">@Override</span>
+    <span class="s2">public void </span><span class="s1">runOpMode() </span><span class="s2">throws </span><span class="s1">InterruptedException{</span>
+
+        <span class="s1">teleUpdate(</span><span class="s3">&quot;status&quot;</span><span class="s2">, </span><span class="s3">&quot;Starting runOpMode&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">robot.init(hardwareMap)</span><span class="s2">;</span>
+       <span class="s0">// robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);</span>
+        <span class="s0">//robot.FoundationMoverLeft.setPosition(0.3);    //Pull Position 0.75</span>
+        <span class="s0">//robot.FoundationMoverRight.setPosition(0.88);</span>
+        <span class="s1">function = </span><span class="s2">new </span><span class="s1">LogisticFunction(</span><span class="s4">0.6</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">teleUpdate(</span><span class="s3">&quot;status&quot;</span><span class="s2">, </span><span class="s3">&quot;Starting runOpMode&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">robot.init(hardwareMap)</span><span class="s2">;</span>
+        <span class="s1">robot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)</span><span class="s2">;</span>
+        <span class="s1">robot.FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)</span><span class="s2">;</span>
+        <span class="s1">robot.BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)</span><span class="s2">;</span>
+        <span class="s1">robot.BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)</span><span class="s2">;</span>
+        <span class="s0">//robot.FoundationMoverLeft.setPosition(0.3);    //Pull Position 0.75</span>
+        <span class="s0">//robot.FoundationMoverRight.setPosition(0.88);</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);</span>
+        <span class="s1">BNO055IMU.Parameters parameters = </span><span class="s2">new </span><span class="s1">BNO055IMU.Parameters()</span><span class="s2">;</span>
+        <span class="s1">parameters.mode                = BNO055IMU.SensorMode.IMU</span><span class="s2">;</span>
+        <span class="s1">parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES</span><span class="s2">;</span>
+        <span class="s1">parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC</span><span class="s2">;</span>
+        <span class="s1">parameters.loggingEnabled      = </span><span class="s2">false;</span>
+        <span class="s0">//robot.webcamServo.setPosition(0.17);</span>
+        <span class="s1">teleUpdate(</span><span class="s3">&quot;WWWWWWWWWWWWWWWWWWWWWWWWWWWWW&quot;</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">imu = hardwareMap.get(BNO055IMU.</span><span class="s2">class, </span><span class="s3">&quot;imu 1&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">teleUpdate(</span><span class="s3">&quot;EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEee&quot;</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">imu.initialize(parameters)</span><span class="s2">;</span>
+        <span class="s1">teleUpdate(</span><span class="s3">&quot;QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQqqq&quot;</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">pidRotate = </span><span class="s2">new </span><span class="s1">PIDController(</span><span class="s4">.003</span><span class="s2">, </span><span class="s4">.00003</span><span class="s2">, </span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">teleUpdate(</span><span class="s3">&quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&quot;</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">pidDrive = </span><span class="s2">new </span><span class="s1">PIDController(</span><span class="s4">.05</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Mode&quot;</span><span class="s2">, </span><span class="s3">&quot;calibrating...&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">telemetry.update()</span><span class="s2">;</span>
+        <span class="s2">while </span><span class="s1">(!isStopRequested() &amp;&amp; !imu.isGyroCalibrated())</span>
+        <span class="s1">{</span>
+            <span class="s1">sleep(</span><span class="s4">50</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">idle()</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s1">telemetry.addData(</span><span class="s3">&quot;Mode&quot;</span><span class="s2">, </span><span class="s3">&quot;waiting for start&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s0">//telemetry.addData(&quot;imu calib status&quot;, imu.getCalibrationStatus().toString());</span>
+        <span class="s1">telemetry.update()</span><span class="s2">;</span>
+<span class="s0">//        VuforiaLocalizer.Parameters vparameters = new VuforiaLocalizer.Parameters();</span>
+<span class="s0">//        String VUFORIA_KEY =</span>
+<span class="s0">//                &quot;  ARGKFNf/////AAABmeWmTIKr70aQrGH7lC6M8xBPdcMfnaNjD/dopWNwdsWuQbrZLFQZZBr/eFBlpHuykY0IY4f9Y34OVFaL4NRxmFd4ghxNkwK3Cjl/4Jo6bf/v+ovD7Tqdf8cT0A3McQF2rxOPE8fsmaC2TfCr8nZquqbbaTZT7bxtuvi8skuLfHg0BNRGaKtEYyPaJ+wdvAcJZ8+2rZ6q+77Ooh2teMYGmJRe+KDD8LmIMn5Jh/r/Lbm9WqjmxuSV6NxwAwpqTPydgJAE/19fXRVbC4+vGWAiiAxd/UIrLxDtgwekkiudCLSa1r1Y8XjtaTeUUWYXl7+iAxkAOX3ZYa84fFrPGnFvYdhjnIuRGo4AgL6dvb/pQEaK &quot;;</span>
+
+<span class="s0">//        vparameters.vuforiaLicenseKey = VUFORIA_KEY;</span>
+<span class="s0">//        vparameters.cameraName = hardwareMap.get(WebcamName.class, &quot;Webcam 1&quot;);</span>
+<span class="s0">//        VuforiaLocalizer vuforia = null;</span>
+        <span class="s0">//Instantiate the Vuforia engine</span>
+<span class="s0">//        vuforia = ClassFactory.getInstance().createVuforia(vparameters);</span>
+<span class="s0">//        TFObjectDetector tfod;</span>
+<span class="s0">//        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(</span>
+<span class="s0">//                &quot;tfodMonitorViewId&quot;, &quot;id&quot;, hardwareMap.appContext.getPackageName());</span>
+<span class="s0">//        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);</span>
+<span class="s0">//        tfodParameters.minResultConfidence = 0.8f;</span>
+        <span class="s0">//tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);</span>
+<span class="s0">//        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);</span>
+        <span class="s0">//Thread.sleep(1000);</span>
+        <span class="s1">initVuforia()</span><span class="s2">;</span>
+        <span class="s1">initTfod()</span><span class="s2">;</span>
+        <span class="s1">resetAngle()</span><span class="s2">;</span>
+
+        <span class="s1">tfod.activate()</span><span class="s2">;</span>
+        <span class="s1">tfod.setZoom(</span><span class="s4">3</span><span class="s2">, </span><span class="s4">1.78</span><span class="s1">)</span><span class="s2">;</span>
+
+        <span class="s2">while </span><span class="s1">(!opModeIsActive()) {</span>
+            <span class="s1">List&lt;Recognition&gt; updatedRecognitions = tfod.getUpdatedRecognitions()</span><span class="s2">;</span>
+
+            <span class="s2">if </span><span class="s1">(updatedRecognitions != </span><span class="s2">null</span><span class="s1">) {</span>
+                <span class="s1">telemetry.addData(</span><span class="s3">&quot;# Object Detected&quot;</span><span class="s2">, </span><span class="s1">updatedRecognitions.size())</span><span class="s2">;</span>
+                <span class="s0">// step through the list of recognitions and display boundary info.</span>
+                <span class="s2">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s2">;</span>
+                <span class="s2">for </span><span class="s1">(Recognition recognition : updatedRecognitions) {</span>
+<span class="s0">//                    telemetry.addData(String.format(&quot;label (%d)&quot;, i), recognition.getLabel());</span>
+<span class="s0">//                    telemetry.addData(String.format(&quot;  left,top (%d)&quot;, i), &quot;%.03f , %.03f&quot;,</span>
+<span class="s0">//                            recognition.getLeft(), recognition.getTop());</span>
+<span class="s0">//                    telemetry.addData(String.format(&quot;  right,bottom (%d)&quot;, i), &quot;%.03f , %.03f&quot;,</span>
+<span class="s0">//                            recognition.getRight(), recognition.getBottom());</span>
+<span class="s0">//                    telemetry.addData(&quot;list size -&gt;&gt;&gt;&gt;&quot;+updatedRecognitions.size(),&quot;&quot;);</span>
+                    <span class="s2">if </span><span class="s1">(recognition.getLabel().equals(</span><span class="s3">&quot;Single&quot;</span><span class="s1">)) {</span>
+                        <span class="s1">valZero = </span><span class="s4">0</span><span class="s2">;</span>
+                        <span class="s1">valSingle = </span><span class="s4">1</span><span class="s2">;</span>
+                        <span class="s1">valQUAD = </span><span class="s4">0</span><span class="s2">;</span>
+                    <span class="s1">} </span><span class="s2">else if </span><span class="s1">(recognition.getLabel().equals((</span><span class="s3">&quot;Quad&quot;</span><span class="s1">))) {</span>
+                        <span class="s1">valZero = </span><span class="s4">0</span><span class="s2">;</span>
+                        <span class="s1">valSingle = </span><span class="s4">0</span><span class="s2">;</span>
+                        <span class="s1">valQUAD = </span><span class="s4">1</span><span class="s2">;</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+                <span class="s2">if </span><span class="s1">(updatedRecognitions.size()==</span><span class="s4">0</span><span class="s1">){</span>
+                    <span class="s1">valZero = </span><span class="s4">1</span><span class="s2">;</span>
+                    <span class="s1">valSingle = </span><span class="s4">0</span><span class="s2">;</span>
+                    <span class="s1">valQUAD = </span><span class="s4">0</span><span class="s2">;</span>
+                <span class="s1">}</span>
+
+            <span class="s1">}</span>
+            <span class="s1">teleUpdate(</span><span class="s3">&quot;&quot;</span><span class="s1">+valZero+</span><span class="s3">&quot;&quot;</span><span class="s1">+valSingle+</span><span class="s3">&quot;&quot;</span><span class="s1">+valQUAD</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+
+
+
+
+
+        <span class="s0">//robot.wobbleServo.setPosition(0);</span>
+        <span class="s1">waitForStart()</span><span class="s2">;</span>
+    <span class="s1">encoderDrive(</span><span class="s4">30</span><span class="s2">,</span><span class="s4">0.5</span><span class="s2">,</span><span class="s3">&quot;drive&quot;</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s2">public void </span><span class="s1">semiTurn(String type</span><span class="s2">, double </span><span class="s1">angle) {</span>
+        <span class="s1">resetAngle()</span><span class="s2">;</span>
+        <span class="s2">if </span><span class="s1">(type.equals(</span><span class="s3">&quot;counterclockwise&quot;</span><span class="s1">)) {</span>
+            <span class="s2">long </span><span class="s1">time = System.currentTimeMillis()</span><span class="s2">;</span>
+            <span class="s2">while </span><span class="s1">(getAngle() &lt;= angle &amp; (System.currentTimeMillis() &lt; (time + </span><span class="s4">6000</span><span class="s1">))) {</span>
+                <span class="s1">power = ((</span><span class="s4">.75</span><span class="s1">*</span><span class="s4">2</span><span class="s1">*</span><span class="s4">0.684</span><span class="s1">/</span><span class="s4">5.063</span><span class="s1">) * (-Math.pow((((getAngle())+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)</span><span class="s2">,</span><span class="s4">2</span><span class="s1">) + </span><span class="s4">4.5</span><span class="s1">*((getAngle()+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)) + </span><span class="s4">0.3</span><span class="s1">)/</span><span class="s4">1.5</span><span class="s2">;</span>
+                <span class="s2">if </span><span class="s1">(Math.abs(angle) &gt; </span><span class="s4">180</span><span class="s1">){</span>
+                    <span class="s1">power = power * </span><span class="s4">1.25</span><span class="s2">;</span>
+                <span class="s1">}</span>
+
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;power: &quot; </span><span class="s1">+ power)</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;angle: &quot; </span><span class="s1">+ getAngle())</span><span class="s2">;</span>
+                <span class="s1">telemetry.update()</span><span class="s2">;</span>
+                <span class="s1">robot.FL.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setPower(power)</span><span class="s2">;</span>
+            <span class="s1">}</span>
+            <span class="s1">robot.FL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s2">if</span><span class="s1">(type.equals(</span><span class="s3">&quot;clockwise&quot;</span><span class="s1">)){</span>
+            <span class="s2">long </span><span class="s1">time = System.currentTimeMillis()</span><span class="s2">;</span>
+            <span class="s2">while </span><span class="s1">(getAngle() &gt;= -angle &amp;&amp; (System.currentTimeMillis()&lt;(time+</span><span class="s4">5000</span><span class="s1">))) {</span>
+                <span class="s1">power = ((</span><span class="s4">.75</span><span class="s1">*</span><span class="s4">2</span><span class="s1">*</span><span class="s4">0.684</span><span class="s1">/</span><span class="s4">5.063</span><span class="s1">) * (-Math.pow((((-getAngle())+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)</span><span class="s2">,</span><span class="s4">2</span><span class="s1">) + </span><span class="s4">4.5</span><span class="s1">*((-getAngle()+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)) + </span><span class="s4">0.159</span><span class="s1">)/</span><span class="s4">2.5</span><span class="s2">;</span>
+                <span class="s2">if </span><span class="s1">(Math.abs(angle) &gt; </span><span class="s4">180</span><span class="s1">){</span>
+                    <span class="s1">power = power * </span><span class="s4">1.25</span><span class="s2">;</span>
+                <span class="s1">}</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;&quot;</span><span class="s1">+power)</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;&quot;</span><span class="s1">+getAngle())</span><span class="s2">;</span>
+                <span class="s1">telemetry.update()</span><span class="s2">;</span>
+                <span class="s1">robot.FL.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setPower(-power)</span><span class="s2">;</span>
+            <span class="s1">}</span>
+            <span class="s1">robot.FL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);</span>
+
+
+
+
+    <span class="s1">}</span>
+    <span class="s2">public void </span><span class="s1">blockServoControlLeft(</span><span class="s2">boolean </span><span class="s1">control){</span>
+        <span class="s2">if</span><span class="s1">(control){</span>
+
+            <span class="s0">//robot.FoundationMoverLeft.setPosition(0.8);    //Pull Position 0.75</span>
+        <span class="s1">}</span>
+
+        <span class="s2">else  </span><span class="s1">{</span>
+            <span class="s0">//robot.FoundationMoverLeft.setPosition(0.3);    //Pull Position 0.75</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+    <span class="s2">public void </span><span class="s1">blockServoControlRight(</span><span class="s2">boolean </span><span class="s1">control){</span>
+        <span class="s2">if</span><span class="s1">(control){</span>
+
+            <span class="s0">//robot.FoundationMoverRight.setPosition(0.2);    //Pull Position 0.75</span>
+        <span class="s1">}</span>
+
+        <span class="s2">else  </span><span class="s1">{</span>
+            <span class="s0">//robot.FoundationMoverRight.setPosition(0.88);    //Pull Position 0.75</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+
+    <span class="s2">public void </span><span class="s1">fullTurn(String type){</span>
+        <span class="s1">resetAngle()</span><span class="s2">;</span>
+        <span class="s2">if</span><span class="s1">(type.equals(</span><span class="s3">&quot;counterclockwise&quot;</span><span class="s1">)){</span>
+            <span class="s2">long </span><span class="s1">time = System.currentTimeMillis()</span><span class="s2">;</span>
+            <span class="s2">while </span><span class="s1">((getAngle() &lt;= </span><span class="s4">170 </span><span class="s1">&amp; (System.currentTimeMillis()&lt;(time+</span><span class="s4">6000</span><span class="s1">))) &amp;&amp; opModeIsActive()) {</span>
+                <span class="s1">power = ((</span><span class="s4">.75</span><span class="s1">*</span><span class="s4">2</span><span class="s1">*</span><span class="s4">0.684</span><span class="s1">/</span><span class="s4">5.063</span><span class="s1">) * (-Math.pow((((getAngle())+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)</span><span class="s2">,</span><span class="s4">2</span><span class="s1">) + </span><span class="s4">4.5</span><span class="s1">*((getAngle()+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)) + </span><span class="s4">0.159</span><span class="s1">)/</span><span class="s4">1.5</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;power: &quot;</span><span class="s1">+power)</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;angle: &quot;</span><span class="s1">+getAngle())</span><span class="s2">;</span>
+                <span class="s1">telemetry.update()</span><span class="s2">;</span>
+                <span class="s1">robot.FL.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setPower(power)</span><span class="s2">;</span>
+            <span class="s1">}</span>
+            <span class="s1">robot.FL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s2">if</span><span class="s1">(type.equals(</span><span class="s3">&quot;clockwise&quot;</span><span class="s1">)){</span>
+            <span class="s2">long </span><span class="s1">time = System.currentTimeMillis()</span><span class="s2">;</span>
+            <span class="s2">while </span><span class="s1">(getAngle() &gt;= -</span><span class="s4">170 </span><span class="s1">&amp;&amp; (System.currentTimeMillis()&lt;(time+</span><span class="s4">5000</span><span class="s1">))) {</span>
+                <span class="s1">power = ((</span><span class="s4">.75</span><span class="s1">*</span><span class="s4">2</span><span class="s1">*</span><span class="s4">0.684</span><span class="s1">/</span><span class="s4">5.063</span><span class="s1">) * (-Math.pow((((-getAngle())+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)</span><span class="s2">,</span><span class="s4">2</span><span class="s1">) + </span><span class="s4">4.5</span><span class="s1">*((-getAngle()+</span><span class="s4">2.9</span><span class="s1">)/</span><span class="s4">37.4</span><span class="s1">)) + </span><span class="s4">0.159</span><span class="s1">)/</span><span class="s4">1.5</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;&quot;</span><span class="s1">+power)</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;&quot;</span><span class="s1">+getAngle())</span><span class="s2">;</span>
+                <span class="s1">telemetry.update()</span><span class="s2">;</span>
+                <span class="s1">robot.FL.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setPower(-power)</span><span class="s2">;</span>
+            <span class="s1">}</span>
+            <span class="s1">robot.FL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);</span>
+    <span class="s1">}</span>
+
+    <span class="s2">public void </span><span class="s1">halfTurn(String type){</span>
+        <span class="s1">telemetry.addLine(</span><span class="s3">&quot;performing half turn &quot; </span><span class="s1">+  type)</span><span class="s2">;</span>
+        <span class="s1">resetAngle()</span><span class="s2">;</span>
+        <span class="s2">if</span><span class="s1">(type.equals(</span><span class="s3">&quot;counterclockwise&quot;</span><span class="s1">)){</span>
+            <span class="s2">long </span><span class="s1">time = System.currentTimeMillis()</span><span class="s2">;</span>
+            <span class="s1">telemetry.addLine(</span><span class="s3">&quot;time: &quot; </span><span class="s1">+ time)</span><span class="s2">;</span>
+            <span class="s2">while </span><span class="s1">(getAngle() &lt;= </span><span class="s4">87 </span><span class="s1">&amp; (System.currentTimeMillis()&lt;(time+</span><span class="s4">5000</span><span class="s1">))) {</span>
+                <span class="s1">power = ((</span><span class="s4">0.75 </span><span class="s0">/*used to be .75*/ </span><span class="s1">*</span><span class="s4">0.684</span><span class="s1">/</span><span class="s4">5.063</span><span class="s1">) * (-Math.pow((((getAngle())+</span><span class="s4">6.5</span><span class="s1">)/</span><span class="s4">19.5</span><span class="s1">)</span><span class="s2">,</span><span class="s4">2</span><span class="s1">) + </span><span class="s4">4.5</span><span class="s1">*((getAngle()+</span><span class="s4">6.5</span><span class="s1">)/</span><span class="s4">19.5</span><span class="s1">)) + </span><span class="s4">0.159</span><span class="s1">)/</span><span class="s4">1.5</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;power: &quot; </span><span class="s1">+ power)</span><span class="s2">;</span>
+                <span class="s1">telemetry.update()</span><span class="s2">;</span>
+                <span class="s1">telemetry.addLine(</span><span class="s3">&quot;angle: &quot; </span><span class="s1">+ getAngle())</span><span class="s2">;</span>
+                <span class="s1">telemetry.update()</span><span class="s2">;</span>
+                <span class="s1">robot.FL.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setPower(power)</span><span class="s2">;</span>
+            <span class="s1">}</span>
+            <span class="s1">robot.FL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s2">if</span><span class="s1">(type.equals(</span><span class="s3">&quot;clockwise&quot;</span><span class="s1">)){</span>
+            <span class="s2">long </span><span class="s1">time = System.currentTimeMillis()</span><span class="s2">;</span>
+            <span class="s2">while </span><span class="s1">(getAngle() &gt;= -</span><span class="s4">87 </span><span class="s1">&amp;&amp; (System.currentTimeMillis()&lt;(time+</span><span class="s4">5000</span><span class="s1">))) {</span>
+                <span class="s1">power = ((</span><span class="s4">.75</span><span class="s1">*</span><span class="s4">0.684</span><span class="s1">/</span><span class="s4">5.063</span><span class="s1">) * (-Math.pow((((-getAngle())+</span><span class="s4">6.5</span><span class="s1">)/</span><span class="s4">19.5</span><span class="s1">)</span><span class="s2">,</span><span class="s4">2</span><span class="s1">) + </span><span class="s4">4.5</span><span class="s1">*((-getAngle()+</span><span class="s4">6.5</span><span class="s1">)/</span><span class="s4">19.5</span><span class="s1">)) + </span><span class="s4">0.159</span><span class="s1">)/</span><span class="s4">1.5</span><span class="s2">;</span>
+                <span class="s1">teleUpdate(</span><span class="s3">&quot;&quot;</span><span class="s1">+power</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                <span class="s1">robot.FL.setPower(-power)</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setPower(power)</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setPower(-power)</span><span class="s2">;</span>
+            <span class="s1">}</span>
+            <span class="s1">robot.FL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setPower(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);</span>
+    <span class="s1">}</span>
+
+
+    <span class="s2">public void </span><span class="s1">encoderDrive(</span><span class="s2">double </span><span class="s1">inches</span><span class="s2">, double </span><span class="s1">pow</span><span class="s2">, </span><span class="s1">String driveMode) </span><span class="s2">throws </span><span class="s1">InterruptedException {</span>
+        <span class="s2">if</span><span class="s1">(driveMode.equals(</span><span class="s3">&quot;drive&quot;</span><span class="s1">)){</span>
+            <span class="s0">//settargetposition is inverse</span>
+            <span class="s0">//if setpower command for backward is -, then getpowers for both are both positive</span>
+            <span class="s1">pidDrive.setSetpoint(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">pidDrive.setOutputRange(</span><span class="s4">0</span><span class="s2">, </span><span class="s1">power)</span><span class="s2">;</span>
+            <span class="s1">pidDrive.setInputRange(-</span><span class="s4">90</span><span class="s2">, </span><span class="s4">90</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">pidDrive.enable()</span><span class="s2">;</span>
+            <span class="s1">resetAngle()</span><span class="s2">;</span>
+            <span class="s1">teleUpdate(</span><span class="s3">&quot;&quot;</span><span class="s1">+robot.FL.getCurrentPosition() +</span><span class="s3">&quot;   &lt;&gt;   &quot; </span><span class="s1">+ robot.FL.getTargetPosition()</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos1 = robot.FL.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos2 = robot.BL.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos3 = robot.FR.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos4 = robot.BR.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s1">robot.FL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s2">double </span><span class="s1">currentPosInches</span><span class="s2">;</span>
+            <span class="s2">if</span><span class="s1">(inches&lt;=</span><span class="s4">0</span><span class="s1">) {</span>
+                <span class="s1">robot.FL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s0">//robot.changeSpeed(power);</span>
+                <span class="s2">while </span><span class="s1">(robot.FR.getTargetPosition()&gt;robot.FR.getCurrentPosition()||</span>
+                        <span class="s1">robot.FL.getTargetPosition()&gt;robot.FL.getCurrentPosition()||</span>
+                        <span class="s1">robot.BR.getTargetPosition()&gt;robot.BR.getCurrentPosition()||</span>
+                        <span class="s1">robot.BL.getTargetPosition()&gt;robot.BL.getCurrentPosition()) {</span>
+                    <span class="s1">correction = pidDrive.performPID(getAngle())</span><span class="s2">;</span>
+                    <span class="s1">currentPosInches = ((robot.FL.getCurrentPosition() - startPos1) / COUNTS_PER_INCH)</span><span class="s2">;</span>
+                    <span class="s1">teleUpdate(</span><span class="s3">&quot;CURRENTPOSINCHES: &quot;</span><span class="s1">+currentPosInches+</span><span class="s3">&quot;&quot;</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                    <span class="s1">power = function.getPowerAt(currentPosInches</span><span class="s2">, </span><span class="s1">-inches</span><span class="s2">, </span><span class="s1">pow</span><span class="s2">, </span><span class="s3">&quot;drive&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                    <span class="s1">robot.FL.setPower(power + correction)</span><span class="s2">;</span>
+                    <span class="s1">robot.BR.setPower(power - correction)</span><span class="s2">;</span>
+                    <span class="s1">robot.FR.setPower(power - correction)</span><span class="s2">;</span>
+                    <span class="s1">robot.BL.setPower(power + correction)</span><span class="s2">;</span>
+                    <span class="s1">teleUpdate(</span><span class="s3">&quot;currentPos: &quot;</span><span class="s1">+robot.FL.getCurrentPosition() + </span><span class="s3">&quot;    power: &quot; </span><span class="s1">+ power + </span><span class="s3">&quot;    correction: &quot; </span><span class="s1">+ correction</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s2">else</span><span class="s1">{</span>
+                <span class="s0">//robot.changeSpeed(-power);</span>
+                <span class="s1">robot.FL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s1">robot.BR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s1">robot.FR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s1">robot.BL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+                <span class="s2">while </span><span class="s1">(robot.FR.getTargetPosition()&lt;robot.FR.getCurrentPosition()||</span>
+                        <span class="s1">robot.FL.getTargetPosition()&lt;robot.FL.getCurrentPosition()||</span>
+                        <span class="s1">robot.BR.getTargetPosition()&lt;robot.BR.getCurrentPosition()||</span>
+                        <span class="s1">robot.BL.getTargetPosition()&lt;robot.BL.getCurrentPosition()) {</span>
+                    <span class="s1">correction = pidDrive.performPID(getAngle())</span><span class="s2">;</span>
+                    <span class="s1">currentPosInches = ((robot.FL.getCurrentPosition() - startPos1) / COUNTS_PER_INCH * -</span><span class="s4">1</span><span class="s1">)</span><span class="s2">;</span>
+                    <span class="s1">power = -function.getPowerAt(currentPosInches</span><span class="s2">, </span><span class="s1">inches</span><span class="s2">, </span><span class="s1">pow</span><span class="s2">, </span><span class="s3">&quot;drive&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                    <span class="s1">robot.FL.setPower((power + correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.BR.setPower((power - correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.FR.setPower((power - correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.BL.setPower((power + correction))</span><span class="s2">;</span>
+                    <span class="s1">teleUpdate(</span><span class="s3">&quot;currentPos: &quot;</span><span class="s1">+robot.FL.getCurrentPosition() + </span><span class="s3">&quot;    power: &quot; </span><span class="s1">+ power + </span><span class="s3">&quot;    correction: &quot; </span><span class="s1">+ correction</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+           <span class="s0">// robot.changeSpeed(0);</span>
+        <span class="s1">}</span>
+        <span class="s2">else if</span><span class="s1">(driveMode.equals(</span><span class="s3">&quot;strafe&quot;</span><span class="s1">)){</span><span class="s0">/////LEFT IS POSITIVE</span>
+            <span class="s1">pidDrive.setSetpoint(</span><span class="s4">0</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">pidDrive.setOutputRange(</span><span class="s4">0</span><span class="s2">, </span><span class="s1">power)</span><span class="s2">;</span>
+            <span class="s1">pidDrive.setInputRange(-</span><span class="s4">90</span><span class="s2">, </span><span class="s4">90</span><span class="s1">)</span><span class="s2">;</span>
+            <span class="s1">pidDrive.enable()</span><span class="s2">;</span>
+            <span class="s1">resetAngle()</span><span class="s2">;</span>
+
+            <span class="s2">int </span><span class="s1">startPos1 = robot.FL.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos2 = robot.BL.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos3 = robot.FR.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s2">int </span><span class="s1">startPos4 = robot.BR.getCurrentPosition()</span><span class="s2">;</span>
+            <span class="s1">robot.FL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s1">robot.BR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s1">robot.FR.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+            <span class="s1">robot.BL.setTargetPosition((</span><span class="s2">int</span><span class="s1">)(-inches*COUNTS_PER_INCH))</span><span class="s2">;</span>
+<span class="s0">//            telemetry.addLine(robot.frontLeft.getTargetPosition()+&quot; &lt;- TARGET&quot;);</span>
+<span class="s0">//            telemetry.addLine(robot.frontLeft.getCurrentPosition()+&quot; &lt;- Current&quot;);</span>
+<span class="s0">//            telemetry.update();</span>
+<span class="s0">//            Thread.sleep(2000);</span>
+
+            <span class="s2">double </span><span class="s1">currentPosInches</span><span class="s2">;</span>
+            <span class="s0">//power = 0.9;</span>
+            <span class="s0">//robot.changeSpeed(power);</span>
+            <span class="s2">if</span><span class="s1">(inches&gt;</span><span class="s4">0</span><span class="s1">) {</span>
+                <span class="s2">while </span><span class="s1">(robot.FR.getTargetPosition()&lt;robot.FR.getCurrentPosition()||</span>
+                        <span class="s1">robot.FL.getTargetPosition()&gt;robot.FL.getCurrentPosition()||</span>
+                        <span class="s1">robot.BR.getTargetPosition()&gt;robot.BR.getCurrentPosition()||</span>
+                        <span class="s1">robot.BL.getTargetPosition()&lt;robot.BL.getCurrentPosition()) {</span>
+                    <span class="s1">correction = pidDrive.performPID(getAngle())</span><span class="s2">;</span>
+                    <span class="s1">currentPosInches = ((robot.FL.getCurrentPosition() - startPos1) / COUNTS_PER_INCH)</span><span class="s2">;</span>
+                    <span class="s1">power = function.getPowerAt(currentPosInches</span><span class="s2">, </span><span class="s1">inches</span><span class="s2">, </span><span class="s1">pow</span><span class="s2">, </span><span class="s3">&quot;strafe&quot;</span><span class="s1">)*</span><span class="s4">1.1</span><span class="s2">;</span>
+                    <span class="s1">robot.FL.setPower((power + correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.BR.setPower((power - correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.FR.setPower(-(power + correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.BL.setPower(-(power - correction))</span><span class="s2">;             </span><span class="s0">//STRAFE</span>
+                    <span class="s1">teleUpdate(</span><span class="s3">&quot;power: &quot;</span><span class="s1">+power</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s2">else</span><span class="s1">{</span>
+                <span class="s2">while </span><span class="s1">(robot.FR.getTargetPosition()&gt;robot.FR.getCurrentPosition()||</span>
+                        <span class="s1">robot.FL.getTargetPosition()&lt;robot.FL.getCurrentPosition()||</span>
+                        <span class="s1">robot.BR.getTargetPosition()&lt;robot.BR.getCurrentPosition()||</span>
+                        <span class="s1">robot.BL.getTargetPosition()&gt;robot.BL.getCurrentPosition()) {</span>
+                    <span class="s1">correction = pidDrive.performPID(getAngle())</span><span class="s2">;</span>
+                    <span class="s1">currentPosInches = ((robot.FL.getCurrentPosition() - startPos1) / COUNTS_PER_INCH * -</span><span class="s4">1</span><span class="s1">)</span><span class="s2">;</span>
+                    <span class="s1">power = -function.getPowerAt(currentPosInches</span><span class="s2">, </span><span class="s1">-inches</span><span class="s2">, </span><span class="s1">pow</span><span class="s2">, </span><span class="s3">&quot;strafe&quot;</span><span class="s1">)*</span><span class="s4">1.1</span><span class="s2">;</span>
+                    <span class="s1">robot.FL.setPower((power + correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.BR.setPower((power - correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.FR.setPower(-(power + correction))</span><span class="s2">;</span>
+                    <span class="s1">robot.BL.setPower(-(power - correction))</span><span class="s2">;             </span><span class="s0">//STRAFE</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s0">//robot.changeSpeed(0);</span>
+        <span class="s1">}</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);</span>
+        <span class="s0">//robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);</span>
+        <span class="s1">Thread.sleep(</span><span class="s4">100</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+
+
+
+
+    <span class="s2">public void </span><span class="s1">teleUpdate(String label</span><span class="s2">, </span><span class="s1">String description){</span>
+        <span class="s2">if </span><span class="s1">(robot != </span><span class="s2">null </span><span class="s1">&amp;&amp; robot.FL != </span><span class="s2">null </span><span class="s1">&amp;&amp; robot.FR != </span><span class="s2">null</span><span class="s1">) {</span>
+
+        <span class="s1">}</span>
+        <span class="s1">telemetry.addLine().addData(label + </span><span class="s3">&quot;: &quot;</span><span class="s2">, </span><span class="s1">description)</span><span class="s2">;</span>
+        <span class="s1">telemetry.update()</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s2">private double </span><span class="s1">getAngle()</span>
+    <span class="s1">{</span>
+        <span class="s0">// We experimentally determined the Z axis is the axis we want to use for heading angle.</span>
+        <span class="s0">// We have to process the angle because the imu works in euler angles so the Z axis is</span>
+        <span class="s0">// returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes</span>
+        <span class="s0">// 180 degrees. We detect this transition and track the total cumulative angle of rotation.</span>
+        <span class="s1">Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC</span><span class="s2">, </span><span class="s1">AxesOrder.ZYX</span><span class="s2">, </span><span class="s1">AngleUnit.DEGREES)</span><span class="s2">;</span>
+        <span class="s2">double </span><span class="s1">deltaAngle = angles.firstAngle - lastAngles.firstAngle</span><span class="s2">;</span>
+
+        <span class="s2">if </span><span class="s1">(deltaAngle &lt; -</span><span class="s4">180</span><span class="s1">)</span>
+            <span class="s1">deltaAngle += </span><span class="s4">360</span><span class="s2">;</span>
+        <span class="s2">else if </span><span class="s1">(deltaAngle &gt; </span><span class="s4">180</span><span class="s1">)</span>
+            <span class="s1">deltaAngle -= </span><span class="s4">360</span><span class="s2">;</span>
+
+        <span class="s1">globalAngle += deltaAngle</span><span class="s2">;</span>
+
+        <span class="s1">lastAngles = angles</span><span class="s2">;</span>
+
+        <span class="s2">return </span><span class="s1">globalAngle</span><span class="s2">;</span>
+    <span class="s1">}</span>
+    <span class="s2">private void </span><span class="s1">resetAngle()</span>
+    <span class="s1">{</span>
+        <span class="s1">lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC</span><span class="s2">, </span><span class="s1">AxesOrder.ZYX</span><span class="s2">, </span><span class="s1">AngleUnit.DEGREES)</span><span class="s2">;</span>
+
+        <span class="s1">globalAngle = </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s1">}</span>
+    <span class="s2">enum </span><span class="s1">Stage</span>
+    <span class="s1">{</span><span class="s0">//color difference. greyscale</span>
+        <span class="s1">detection</span><span class="s2">,</span><span class="s0">//includes outlines</span>
+        <span class="s1">THRESHOLD</span><span class="s2">,</span><span class="s0">//b&amp;w</span>
+        <span class="s1">RAW_IMAGE</span><span class="s2">,</span><span class="s0">//displays raw view</span>
+    <span class="s1">}</span>
+
+    <span class="s2">private </span><span class="s1">Stage stageToRenderToViewport = Stage.detection</span><span class="s2">;</span>
+    <span class="s2">private </span><span class="s1">Stage[] stages = Stage.values()</span><span class="s2">;</span>
+
+
+<span class="s1">}</span>
+
+
+
+</pre>
+</body>
+</html>
