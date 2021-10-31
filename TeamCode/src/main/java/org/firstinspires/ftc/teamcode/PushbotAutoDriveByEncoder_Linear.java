@@ -28,14 +28,17 @@
  */
 
 package org.firstinspires.ftc.teamcode;
-
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -80,7 +83,48 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
     static final double DRIVE_SPEED = 0.6;
     static final double TURN_SPEED = 0.5;
+    static final double CARO_DIST = 80;//inches
+    static final double     FORWARD_SPEED = 0.18;
 
+    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    private static final String[] LABELS = {
+            "Ball",
+            "Cube",
+            "Duck",
+            "Marker"
+    };
+    private VuforiaLocalizer vuforia; //start of vuforia
+    private TFObjectDetector tfod;
+    String VUFORIA_KEY =
+            "  AQPmkNv/////AAABmdxLYQ/wu0AklzJL8KSxv7JBzxPLjVotEKmYbHOuh2IRfiFORiDFAmnVudtYfU2lnfHtY52js++UYJP1GQPU2MyXc0SshJVaAVdqYSSs+AXj5hk53ahu6Ce/gwCzdgTQ012TbwUTXJj69VydVB+q75b+UAS/f7U+ddgTOPVulb688iR7I/7aFKTvGC8eeJPM4hPGJOB+zbcI8gd9YErYqhQL4Ot/ek7K0UogrjI2/W4qRxvWlP0GXm0ymybEMlDGovIZWhYykufVvwwAL+TLZld61pJ9m4AMfvzIrvmrIZO5iAmVwNHBtXBiaugvHCgooTncQrn0OcjebK8+Qj7JbDqlcxG/3sVK+RKIcUf9DnWv ";
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
 
     @Override
     public void runOpMode() {
@@ -89,6 +133,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
+        initVuforia();
+        initTfod();
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -120,16 +166,28 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
 
         //////// CODE FOR BLUE CAROSUEL
-        encoderDrive(DRIVE_SPEED, 10, 10, 6);
-        encoderDrive(DRIVE_SPEED, -10, -10, 5);
-        //encoderStrafe(DRIVE_SPEED, 13, 13, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderCARO(10, 10);
+                    //encoderDrive(DRIVE_SPEED, 10, 10, 6);
+                            //encoderDrive(DRIVE_SPEED, -10, -10, 5);
 
-        //encoderStrafe(DRIVE_SPEED,-13,-13,5.0);
-        //encoderDrive(TURN_SPEED, 6, -6, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        //encoderDrive(DRIVE_SPEED, 68, 68, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+    //    encoderStrafe(DRIVE_SPEED, 17, 17, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+
+
+        //used for caro movment
+        /*robot.CARO.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+
+
+        encoderStrafe(DRIVE_SPEED,-13,-13,5.0);
+        encoderDrive(TURN_SPEED, 6, -6, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 68, 68, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         //encoderDrive(0.4,5,5,3.0);
-
+*/
 
         //  robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
         //robot.rightClaw.setPosition(0.0);
@@ -301,23 +359,20 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
     }
 
-    public void encoderCARO(double inches, double speed){
+    public void encoderCARO(double inches, double speed, double timeoutS){
         int newCAROTARGET;
         if (opModeIsActive()) {
             newCAROTARGET = robot.CARO.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
             robot.CARO.setTargetPosition(newCAROTARGET);
 
-            telemetry.addData("xxCounts_Per_Inch", "Running to %7d", COUNTS_PER_INCH);
-            telemetry.addData("xxnewCAROTARGET - inches", "Running to %7d", newCAROTARGET);
-            telemetry.addData("xxPath2", "Running at %7d", robot.CARO.getCurrentPosition());
-            telemetry.update();
-            robot.CARO.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+             robot.CARO.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             runtime.reset();
 
             robot.CARO.setPower(Math.abs(speed));
-            while (opModeIsActive() && (robot.CARO.isBusy())) {
-                telemetry.addData("Counts_Per_Inch", "Running to %7d", COUNTS_PER_INCH);
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) || (robot.CARO.isBusy())) {
+                //telemetry.addData("Counts_Per_Inch", "Running to %7d", COUNTS_PER_INCH);
                 telemetry.addData("newCAROTARGET - inches", "Running to %7d", newCAROTARGET);
                 telemetry.addData("Path2", "Running at %7d", robot.CARO.getCurrentPosition());
                 telemetry.update();

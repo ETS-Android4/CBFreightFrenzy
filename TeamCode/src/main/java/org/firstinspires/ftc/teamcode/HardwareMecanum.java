@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -59,7 +60,8 @@ public class HardwareMecanum
     public DcMotor  BR  = null;
     public DcMotor  BL  = null;
     public DcMotor  CARO = null;
-
+    public DcMotor  IARM = null;
+    public CRServo  INTAKESERVO = null;
 
 
 
@@ -83,7 +85,8 @@ public class HardwareMecanum
         BR = hwMap.get(DcMotor.class, "br");
         BL = hwMap.get(DcMotor.class, "bl");
         CARO = hwMap.get(DcMotor.class, "caro");
-
+        IARM = hwMap.get(DcMotor.class,"iarm");
+        INTAKESERVO = hwMap.get(CRServo.class,"is");
         FR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         //This motor has to be set the opposite direction of all the other motors for it to work in sync with them
         FL.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors

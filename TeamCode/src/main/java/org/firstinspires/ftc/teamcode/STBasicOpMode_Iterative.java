@@ -32,8 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -63,6 +65,8 @@ public class STBasicOpMode_Iterative extends OpMode
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight= null;
+    private DcMotor intakeARM = null;
+    private CRServo intakeServo = null;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -82,6 +86,8 @@ public class STBasicOpMode_Iterative extends OpMode
         frontRight = robot.FR;
         backRight = robot.BL;
         backLeft = robot.BR;
+        intakeARM = robot.IARM;
+        intakeServo = robot.INTAKESERVO;
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
 
@@ -144,7 +150,34 @@ public class STBasicOpMode_Iterative extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-    }
+
+
+        if (gamepad1.dpad_up) {
+            intakeARM.setPower(1);
+        }
+            else if (!gamepad1.dpad_up) {
+                intakeARM.setPower(0);
+
+                if (gamepad1.dpad_down) {
+                    intakeARM.setPower(-1);
+                }
+                else  if (!gamepad1.dpad_down){
+                    intakeARM.setPower(0);
+                }
+            }
+
+        while (gamepad2.dpad_up) {
+            intakeServo.setPower(1);
+        }
+
+        }
+
+
+
+
+
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP
