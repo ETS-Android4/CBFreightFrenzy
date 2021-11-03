@@ -40,6 +40,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import java.util.List;
+
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
@@ -92,9 +94,15 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
             "Cube",
             "Duck",
             "Marker"
+
     };
     private VuforiaLocalizer vuforia; //start of vuforia
     private TFObjectDetector tfod;
+
+
+
+
+
     String VUFORIA_KEY =
             "  AQPmkNv/////AAABmdxLYQ/wu0AklzJL8KSxv7JBzxPLjVotEKmYbHOuh2IRfiFORiDFAmnVudtYfU2lnfHtY52js++UYJP1GQPU2MyXc0SshJVaAVdqYSSs+AXj5hk53ahu6Ce/gwCzdgTQ012TbwUTXJj69VydVB+q75b+UAS/f7U+ddgTOPVulb688iR7I/7aFKTvGC8eeJPM4hPGJOB+zbcI8gd9YErYqhQL4Ot/ek7K0UogrjI2/W4qRxvWlP0GXm0ymybEMlDGovIZWhYykufVvwwAL+TLZld61pJ9m4AMfvzIrvmrIZO5iAmVwNHBtXBiaugvHCgooTncQrn0OcjebK8+Qj7JbDqlcxG/3sVK+RKIcUf9DnWv ";
     private void initVuforia() {
@@ -104,7 +112,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -136,10 +144,33 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         initVuforia();
         initTfod();
         robot.init(hardwareMap);
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(2, 16.0/9.0);
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
+                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.getLeft(), recognition.getTop());
+                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.getRight(), recognition.getBottom());
+                    i++;
+
+
+                }
+                telemetry.update();
+
+            }
+
+
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
+  //      telemetry.addData("Status", "Resetting Encoders");    //
+    //    telemetry.update();
         //stop and reset
         robot.FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -151,14 +182,52 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at %7d :%7d :%7d :%7d",
-                robot.FL.getCurrentPosition(), robot.FR.getCurrentPosition(),
-                robot.BL.getCurrentPosition(), robot.BR.getCurrentPosition());
+        //telemetry.addData("Path0", "Starting at %7d :%7d :%7d :%7d",
+          //      robot.FL.getCurrentPosition(), robot.FR.getCurrentPosition(),
+            //    robot.BL.getCurrentPosition(), robot.BR.getCurrentPosition());
 
-        telemetry.update();
+//        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+            double rightPos = 0;
+
+            if (opModeIsActive()) {
+                while (opModeIsActive()) {
+                    if (tfod != null) {
+                        // getUpdatedRecognitions() will return null if no new information is available since
+                        // the last time that call was made.
+                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                        if (updatedRecognitions != null) {
+                            telemetry.addData("# Object Detected", updatedRecognitions.size());
+                            // step through the list of recognitions and display boundary info.
+                            int i = 0;
+                            for (Recognition recognition : updatedRecognitions) {
+                                telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                                telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                        recognition.getLeft(), recognition.getTop());
+                                telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                        recognition.getRight(), recognition.getBottom());
+                                i++;
+                                rightPos = recognition.getRight();
+                            }
+                            if (rightPos > 500) {
+                                telemetry.addData("Right", "Duck");
+                                encoderDrive(0.75, 10, 10, 5);
+                            }
+                            else if (rightPos < 500 && rightPos > 250) {
+                                telemetry.addData("Middle", "Duck");
+                            }
+                            else {
+                                telemetry.addData("Left", "Duck");
+                            }
+                            telemetry.update();
+                        }
+                    }
+                }
+            }
+
+
 
         // Step through each leg of the path,
 
