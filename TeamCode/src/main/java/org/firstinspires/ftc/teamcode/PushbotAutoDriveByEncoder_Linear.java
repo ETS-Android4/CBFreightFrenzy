@@ -141,30 +141,60 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
+        double rightPos = 0;
         initVuforia();
         initTfod();
         robot.init(hardwareMap);
         if (tfod != null) {
             tfod.activate();
             tfod.setZoom(2, 16.0/9.0);
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        }
+        if (!opModeIsActive()); {
+        while (!opModeIsActive()) {
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
-                // step through the list of recognitions and display boundary info.
-                int i = 0;
-                for (Recognition recognition : updatedRecognitions) {
-                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
-                    i++;
-
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                        i++;
+                        rightPos = recognition.getRight();
+                    }
+                    telemetry.update();
 
                 }
-                telemetry.update();
-
             }
+        }
+
+            telemetry.update();
+            if (rightPos > 500) {
+                telemetry.addData("Right", "Duck");
+
+            } else if (rightPos < 500 && rightPos > 250) {
+                telemetry.addData("Middle", "Duck");
+
+            } else {
+                telemetry.addData("Left", "Duck");
+            }
+            telemetry.update();
+        }
+
+
+
+
+
+
+
+
 
 
 
@@ -190,41 +220,48 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-            double rightPos = 0;
+
 
             if (opModeIsActive()) {
-                while (opModeIsActive()) {
-                    if (tfod != null) {
-                        // getUpdatedRecognitions() will return null if no new information is available since
-                        // the last time that call was made.
-                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                        if (updatedRecognitions != null) {
-                            telemetry.addData("# Object Detected", updatedRecognitions.size());
-                            // step through the list of recognitions and display boundary info.
-                            int i = 0;
-                            for (Recognition recognition : updatedRecognitions) {
-                                telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                                telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                        recognition.getLeft(), recognition.getTop());
-                                telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                        recognition.getRight(), recognition.getBottom());
-                                i++;
-                                rightPos = recognition.getRight();
-                            }
-                            if (rightPos > 500) {
-                                telemetry.addData("Right", "Duck");
-                                encoderDrive(0.75, 10, 10, 5);
-                            }
-                            else if (rightPos < 500 && rightPos > 250) {
-                                telemetry.addData("Middle", "Duck");
-                            }
-                            else {
-                                telemetry.addData("Left", "Duck");
-                            }
-                            telemetry.update();
-                        }
+
+                if (rightPos > 500) {
+                    telemetry.addData("Right", "Duck");
+                    encoderDrive(0.8,6,6,5);
+                    encoderStrafe(0.8,17,17,5);
+                    encoderDrive(0.8,-6,-6,5);
+
+                    robot.CARO.setPower(FORWARD_SPEED);
+                    runtime.reset();
+                    while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                        telemetry.update();
                     }
+
+                    encoderStrafe(0.8,-35,-35,5);
+                    encoderDrive(0.8,15,15,5);
+                    encoderDrive(0.8,-10,-10,5);
+                    encoderDrive(TURN_SPEED,-17,17,5);
+                    encoderDrive(0.8,48,48,10);
                 }
+                else if (rightPos < 500 && rightPos > 250) {
+                    telemetry.addData("Middle", "Duck");
+                    // CODE FOR BLUE OTHER POSITION PUT HERE FOR THE MEANWHILE
+                    // THE position closer to the warehouse
+                    encoderDrive(0.8,6,6,`  5);
+                    encoderStrafe(0.8,20,20,5);
+                    encoderDrive(0.8,10,10,5);
+                    encoderDrive(0.8,-10,-10,5);
+                    encoderDrive(TURN_SPEED,-17,17,5);
+                    encoderDrive(0.8,18,18,5);
+                    encoderStrafe(0.8,7,7,5);
+                    encoderDrive(0.8,12,12,5);
+                    encoderStrafe(0.8,15,15,5);
+                    encoderDrive(0.8,13,13,5);
+                }
+                else {
+                    telemetry.addData("Left", "Duck");
+                }
+                telemetry.update();
             }
 
 
@@ -234,9 +271,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
 
-        //////// CODE FOR BLUE CAROSUEL
-                    //encoderDrive(DRIVE_SPEED, 10, 10, 6);
-                            //encoderDrive(DRIVE_SPEED, -10, -10, 5);
+
 
 
     //    encoderStrafe(DRIVE_SPEED, 17, 17, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
@@ -258,9 +293,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         //encoderDrive(0.4,5,5,3.0);
 */
 
-        //  robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-        //robot.rightClaw.setPosition(0.0);
-//        sleep(1000);     // pause for servos to move
+
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
