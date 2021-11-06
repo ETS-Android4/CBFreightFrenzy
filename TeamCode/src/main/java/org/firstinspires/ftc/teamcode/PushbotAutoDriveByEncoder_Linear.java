@@ -247,7 +247,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
                     telemetry.addData("Middle", "Duck");
                     // CODE FOR BLUE OTHER POSITION PUT HERE FOR THE MEANWHILE
                     // THE position closer to the warehouse
-                    encoderDrive(0.8,6,6,`  5);
+                    encoderDrive(0.8,6,6,5);
                     encoderStrafe(0.8,20,20,5);
                     encoderDrive(0.8,10,10,5);
                     encoderDrive(0.8,-10,-10,5);
