@@ -65,7 +65,7 @@ import com.vuforia.CameraDevice;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleGoBuilda - use this one", group="Linear Opmode")
+@TeleOp(name="FreightFrenzy_GB", group="Linear Opmode")
 //@Disabled
 public class TelGoBuilda extends LinearOpMode {
     public static int convertBoolean(boolean x) {
@@ -73,13 +73,6 @@ public class TelGoBuilda extends LinearOpMode {
             return 1;
         } else return 0;
     }
-    // Declare OpMode members.
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * (Continuous/Regular) Servo and Motor Usage
-     */
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -87,363 +80,65 @@ public class TelGoBuilda extends LinearOpMode {
     private DcMotor frontRight = null;
     private DcMotor backRight = null;
     private DcMotor backLeft = null;
-    private DcMotor shooter = null;
-    private DcMotor intakeMotor = null;
-    private DcMotor wobbleMotor = null;
-    private Servo wobbleServo = null;
-    private Servo shooterServo = null;
+    private DcMotor arm = null;
+    private DcMotor intake = null;
 
-    /*
-    DcMotor frontLeft = null;
-    DcMotor frontRight = null;
-    DcMotor backRight = null;
-    DcMotor backLeft = null;
-    DcMotor intakeMotor = null;
-    DcMotor wobbleMotor = null;
-    Servo wobbleServo = null;
-    DcMotor shooter = null;
-    Servo rampServo = null;
-
-     */
-    /*private DcMotor xRail = null;
-    private Servo Pivot = null;
-
-    private Servo leftHolder = null;
-    private Servo rightHolder = null;
-
-    private Servo capstoneServo = null;
-
-    private CRServo contServo_left = null;
-    */
-    //private CRServo intakeServo = null;
-
-
-    //private Servo gripServo = null;
-
-    //private Servo FoundationRight = null;
-
-    //private Servo FoundationLeft = null;
     boolean check = false;
     double i;
     boolean check2 = false;
-//    private Servo contArm_left = null;
-//    private Servo contArm_right = null;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public void runOpMode() throws InterruptedException {
+        // Declare our motors
+        // Make sure your ID's match your configuration
+        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("fl");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("bl");
+        DcMotor motorFrontRight = hardwareMap.dcMotor.get("fr");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("br");
+        DcMotor motorArm = hardwareMap.dcMotor.get("arm");
+        DcMotor motorIntake = hardwareMap.dcMotor.get("intake");
 
-    //@Override
-//    public void runOpMode() throws InterruptedException {
-    public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-        /////
-        boolean XYHold = false;        // Gripper Toggle
-        int ClickNum = 0;                // A Button Toggle Count
-        boolean AHold = false;          // A Button Press
-        /////
-        float LeftTrigVal = 0;           // Initializing Trigger Value for Strafing Left
-        float RightTrigVal = 0;
-        // Initializing Trigger Value for Strafing Right
-        /////
-        //boolean Torch = false;
-//        Camera cam = Camera.open();
-        /////
+        double leftPower;
+        double rightPower;
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
+        // Reverse the right side motors
+        // Reverse left motors if you are using NeveRests
+        //motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        /** (Continuous/Regular) Servo and Motor Usage */
-
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        wobbleServo = hardwareMap.get(Servo.class, "wobbleServo");
-        shooterServo = hardwareMap.get(Servo.class, "shooterServo");
-        shooter = hardwareMap.get(DcMotor.class, "shooterMotor");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        wobbleMotor = hardwareMap.get(DcMotor.class, "wobbleMotor");
-
-
-        //xRail = hardwareMap.get(DcMotor.class, "xRailMotor");
-        //Pivot = hardwareMap.get(Servo.class, "pivotServo");
-
-        //gripServo = hardwareMap.get(Servo.class, "gripServo");
-        //capstoneServo = hardwareMap.get(Servo.class, "capstoneServo");
-
-        //contServo_left = hardwareMap.get(CRServo.class, "IntakeServo");
-        //rampServo = (Servo) hardwareMap.get(Servo.class, "rampServo");
-
-        //leftHolder = hardwareMap.get(Servo.class, "leftHolder");
-        //rightHolder = hardwareMap.get(Servo.class, "rightHolder");
-
-        //FoundationLeft = hardwareMap.get(Servo.class, "FoundationMoverLeft");
-        //FoundationRight = hardwareMap.get(Servo.class, "FoundationMoverRight");
-
-
-        //xRail.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Pivot.setPosition(0);
-        //gripServo.setPosition(0.7);
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-        wobbleServo.setPosition(0);
-        shooterServo.setPosition(0.5);
-        //intakeMotor.setDirection(DcMotor.Direction.REVERSE);
-        //rampServo.setPosition(0);
-        //rampServo.setPosition(-0.90);
-        //rampServo.setPosition(0);
-        //rightHolder.setPosition(0.20);
-        //leftHolder.setPosition(0.86);
-        //gripServo.setPosition(0.3);
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        long millis = System.currentTimeMillis();
-        runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        if (isStopRequested()) return;
+
         while (opModeIsActive()) {
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
+            double armC = -gamepad2.left_stick_y;
+            double intakeC = -gamepad2.right_stick_y;
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio, but only when
+            // at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+            motorFrontLeft.setPower(frontLeftPower);
+            motorBackLeft.setPower(backLeftPower);
+            motorFrontRight.setPower(frontRightPower);
+            motorBackRight.setPower(backRightPower);
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            //double drive = -gamepad1.left_stick_y;
-            //double turn  =  gamepad1.right_stick_x;
-            //leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+            leftPower    = Range.clip(armC, -1.0, 1.0) ;
             //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            //leftPower  = -gamepad1.left_stick_y ;
-            //rightPower = -gamepad1.right_stick_y ;
-
-            // Send calculated power to wheels
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            /** Strafing */
-
-            frontLeft.setPower((0.6 * gamepad1.left_stick_y) + gamepad1.left_trigger - gamepad1.right_trigger + (0.5 * (gamepad1.dpad_left ? 1 : 0)) - (0.5 * (gamepad1.dpad_right ? 1 : 0))
-                    - (0.25 * (gamepad1.dpad_up ? 1 : 0)) + (0.3 * (gamepad1.dpad_down ? 1 : 0)));
-            frontRight.setPower((0.6 * gamepad1.right_stick_y) - gamepad1.left_trigger + gamepad1.right_trigger - (0.5 * (gamepad1.dpad_left ? 1 : 0)) + (0.5 * (gamepad1.dpad_right ? 1 : 0))
-                    - (0.25 * (gamepad1.dpad_up ? 1 : 0)) + (0.3 * (gamepad1.dpad_down ? 1 : 0)));
-            backLeft.setPower((0.6 * gamepad1.left_stick_y) - gamepad1.left_trigger + gamepad1.right_trigger - (0.5 * (gamepad1.dpad_left ? 1 : 0)) + (0.5 * (gamepad1.dpad_right ? 1 : 0))
-                    - (0.25 * (gamepad1.dpad_up ? 1 : 0)) + (0.3 * (gamepad1.dpad_down ? 1 : 0)));
-            backRight.setPower((0.6 * gamepad1.right_stick_y) + gamepad1.left_trigger - gamepad1.right_trigger + (0.5 * (gamepad1.dpad_left ? 1 : 0)) - (0.5 * (gamepad1.dpad_right ? 1 : 0))
-                    - (0.25 * (gamepad1.dpad_up ? 1 : 0)) + (0.3 * (gamepad1.dpad_down ? 1 : 0)));
-            //shooter.setPower(0.5)
-            //rampServo.setPosition();
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//            for (int i = 0; i < 500000; i++) {
-
-            // Intake Movement
-            intakeMotor.setPower(0);
-            if (gamepad2.right_bumper) {
-                intakeMotor.setPower(1);
-            }
-            //Shooter Movement
-            shooter.setPower(0);
-            if (gamepad2.left_bumper) {
-                shooter.setPower(1);
-            }
-            else if(gamepad2.left_trigger > 0.05){
-                shooter.setPower(0.925);
-            }
-
-            //Wobble Motor//
-            wobbleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            if (gamepad2.dpad_up) {
-                wobbleMotor.setPower(-0.4);
-            } else if (gamepad2.dpad_down) {
-                wobbleMotor.setPower(0.4);
-            } else {
-                wobbleMotor.setPower(0.0);
-
-            }
-
-            //Wobble Servo//
-            if (gamepad2.x) {
-                wobbleServo.setPosition(0.5);
-            }
-            if (gamepad2.y) {
-                wobbleServo.setPosition(0);
-            }
-
-            //Ramp Servo//
-            if (gamepad2.b) {
-                shooterServo.setPosition(0.5);
-            }
-            if (gamepad2.a) {
-                shooterServo.setPosition(0.8);
-            }
-
-
-
-            /** Foundation Moving */
-
-           /* if(gamepad1.x == true) {
-                FoundationLeft.setPosition(0.85);    //Pull Position 0.75
-                FoundationRight.setPosition(0.15);    //Pull Position 0.2
-            }
-            else{
-                FoundationLeft.setPosition(0.28);
-                FoundationRight.setPosition(0.88);
-            }
-*/
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            /** Changing Intake Wheel Directions */
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            if (gamepad1.left_bumper) {
-
-                //contServo_left.setPower(-2);
-                //rampServo.setPower(-2);
-            }
-            //else if (gamepad1.right_bumper || gamepad2.x) {
-            //contServo_left.setPower(0.05);
-            //    rampServo.setPower(-0.05);
-            //}
-            else {
-                //contServo_left.setPower(2);
-                //rampServo.setPower(2);
-            }
-
-            // moving ramp servo up and down
-            /*
-            if(gamepad2.right_bumper){
-                rampServo.setPosition(0.90);
-
-            }
-            else {
-                rampServo.setPosition(-0.90);
-
-            }
-            */
-
-            /** X-Rails Slide and Pivot*/
-
-
-//////////////////////////////////////////////////////////////////////////////////
-            /*
-            if(gamepad2.a)
-            {
-                rightHolder.setPosition(0.20);
-                leftHolder.setPosition(0.86);
-            }
-            if(gamepad2.b && !(System.currentTimeMillis()<(millis+1000))){
-                rightHolder.setPosition(0.88);
-                leftHolder.setPosition(0.2);
-            }
-            if(gamepad2.x){
-                gripServo.setPosition(0.05);
-            }
-            else gripServo.setPosition(0.3);
-
-            ////////////////////////////////////////////////////
-            /*if(gamepad2.a)
-            {
-                rightHolder.setPosition(0.17);
-                leftHolder.setPosition(0.93);
-                gripServo.setPosition(0.05);
-            }
-            if(gamepad2.b)
-            {
-                gripServo.setPosition(0.3);
-                rightHolder.setPosition(0.88);
-                leftHolder.setPosition(0.2);
-            }
-            if(gamepad2.x){
-                rightHolder.setPosition(0.28);
-                leftHolder.setPosition(0.89);
-            }*/
-
-
-/*
-            if(gamepad2.dpad_left)
-            {
-                Pivot.setPosition(0);
-            }
-            if(gamepad2.dpad_right)
-            {
-                Pivot.setPosition(1);
-            }
-*/
-            /*
-            // Pivot //ttttttttttttttttttttttttttttttttw e3rfeow qerer
-            /*if((gamepad2.dpad_left && (Pivot.getPosition()<0.5))||check){
-                if(check){
-                    i=i+0.5;
-                    Pivot.setPosition(i/100);
-                    if(i==100){
-                        check=false;
-                    }
-                }
-                else{
-                    check=true;
-                    i=5;
-                }
-                //Pivot.setPosition(0.95);
-            }
-
-            else if((gamepad2.dpad_right && Pivot.getPosition()>0.5)||check2){
-                if(check2){
-                    i=i-0.5;
-                    Pivot.setPosition(i/100);
-                    if(i==0){
-                        check2=false;
-                    }
-                }
-                else{
-                    check2=true;
-                    i=100;
-                }
-                //Pivot.setPosition(0.95);
-            }*/
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            /** Strafing Test (Depreciated)
-
-
-             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-             /** Torch Toggle */
-
-//            if(gamepad1.b == true) {
-//                Camera.Parameters p = cam.getParameters();
-//                p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-//                cam.setParameters(p);
-//                cam.startPreview();
-//            } else {
-//                cam.stopPreview();
-//                cam.release();
-//            }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            /** Show the elapsed game time and wheel power. */
-
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", frontLeft.getPower(), frontRight.getPower());
-            telemetry.update();
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            motorArm.setPower(armC/3);
+            motorIntake.setPower(intakeC);
 
         }
     }
+
+
 }
