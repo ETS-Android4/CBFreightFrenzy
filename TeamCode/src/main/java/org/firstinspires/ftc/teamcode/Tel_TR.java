@@ -54,11 +54,11 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="STBasicOpMode_Iterative", group="Iterative Opmode")
+@TeleOp(name="Tel_TR", group="Iterative Opmode")
 //@Disabled
-public class STBasicOpMode_Iterative extends OpMode
+public class Tel_TR extends OpMode
 {
-    HardwareMecanum robot = new HardwareMecanum();
+    HardwareMecanum_TR robot = new HardwareMecanum_TR();
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeft = null;
@@ -91,11 +91,11 @@ public class STBasicOpMode_Iterative extends OpMode
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
 
-//        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-  //      backRight.setDirection(DcMotor.Direction.REVERSE);
+       frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
 
-    //    frontRight.setDirection(DcMotor.Direction.REVERSE);
-      //  backLeft.setDirection(DcMotor.Direction.REVERSE);
+       frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
 
 
@@ -132,15 +132,15 @@ public class STBasicOpMode_Iterative extends OpMode
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
-        double turn = -gamepad1.left_stick_y;
-        double drive  =  gamepad1.right_stick_x;
+        double turn = -gamepad1.right_stick_x;
+        double drive  =  gamepad1.left_stick_y;
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+       rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
+         //leftPower  = -gamepad1.left_stick_y ;
+         //rightPower = -gamepad1.right_stick_y ;
 
         // Send calculated power to wheels
         frontLeft.setPower(leftPower);

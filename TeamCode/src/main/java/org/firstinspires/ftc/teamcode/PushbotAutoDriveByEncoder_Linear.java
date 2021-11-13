@@ -74,7 +74,7 @@ import java.util.List;
 public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwareMecanum robot = new HardwareMecanum();   // Use a Pushbot's hardware
+    HardwareMecanum_TR robot = new HardwareMecanum_TR();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder

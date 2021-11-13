@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open right claw: "right_hand"
  */
 //arjun
-public class HardwareMecanum
+public class HardwareMecanum_TR
 {
     /* Public OpMode members. */
     public DcMotor  FR   = null;
@@ -71,7 +71,7 @@ public class HardwareMecanum
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public HardwareMecanum(){
+    public HardwareMecanum_TR(){
 
     }
 

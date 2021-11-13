@@ -65,9 +65,9 @@ import com.vuforia.CameraDevice;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="FreightFrenzy_GB", group="Linear Opmode")
+@TeleOp(name="Tel_GB", group="Linear Opmode")
 //@Disabled
-public class TelGoBuilda extends LinearOpMode {
+public class Tel_GB extends LinearOpMode {
     public static int convertBoolean(boolean x) {
         if (x) {
             return 1;
