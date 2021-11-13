@@ -69,9 +69,9 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
+@Autonomous(name="Blue_CARO_TR", group="Pushbot")
 //@Disabled
-public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
+public class Blue_CARO_TR extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareMecanum_TR robot = new HardwareMecanum_TR();   // Use a Pushbot's hardware
@@ -147,15 +147,16 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.init(hardwareMap);
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(2, 16.0/9.0);
+            tfod.setZoom(1.75, 16.0/9.0);
         }
         if (!opModeIsActive()); {
         while (!opModeIsActive()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
+                List<Recognition> updatedRecognitions = tfod.getRecognitions();
+
+                if (updatedRecognitions != null && updatedRecognitions.size() > 0) {
                     telemetry.addData("# Object Detected", updatedRecognitions.size());
 
                     // step through the list of recognitions and display boundary info.
@@ -218,7 +219,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
 //        telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
+
+        //  Wait for the game to start (driver presses PLAY)
         waitForStart();
 
 
@@ -245,21 +247,43 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
                 }
                 else if (rightPos < 500 && rightPos > 250) {
                     telemetry.addData("Middle", "Duck");
-                    // CODE FOR BLUE OTHER POSITION PUT HERE FOR THE MEANWHILE
-                    // THE position closer to the warehouse
+                    telemetry.addData("Right", "Duck");
                     encoderDrive(0.8,6,6,5);
-                    encoderStrafe(0.8,20,20,5);
-                    encoderDrive(0.8,10,10,5);
+                    encoderStrafe(0.8,17,17,5);
+                    encoderDrive(0.8,-6,-6,5);
+
+                    robot.CARO.setPower(FORWARD_SPEED);
+                    runtime.reset();
+                    while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                        telemetry.update();
+                    }
+
+                    encoderStrafe(0.8,-35,-35,5);
+                    encoderDrive(0.8,15,15,5);
                     encoderDrive(0.8,-10,-10,5);
                     encoderDrive(TURN_SPEED,-17,17,5);
-                    encoderDrive(0.8,18,18,5);
-                    encoderStrafe(0.8,7,7,5);
-                    encoderDrive(0.8,12,12,5);
-                    encoderStrafe(0.8,15,15,5);
-                    encoderDrive(0.8,13,13,5);
+                    encoderDrive(0.8,48,48,10);
                 }
                 else {
                     telemetry.addData("Left", "Duck");
+                    telemetry.addData("Right", "Duck");
+                    encoderDrive(0.8,6,6,5);
+                    encoderStrafe(0.8,17,17,5);
+                    encoderDrive(0.8,-6,-6,5);
+
+                    robot.CARO.setPower(FORWARD_SPEED);
+                    runtime.reset();
+                    while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                        telemetry.update();
+                    }
+
+                    encoderStrafe(0.8,-35,-35,5);
+                    encoderDrive(0.8,15,15,5);
+                    encoderDrive(0.8,-10,-10,5);
+                    encoderDrive(TURN_SPEED,-17,17,5);
+                    encoderDrive(0.8,48,48,10);
                 }
                 telemetry.update();
             }
