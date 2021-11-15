@@ -82,10 +82,14 @@ public class Tel_GB extends LinearOpMode {
     private DcMotor backLeft = null;
     private DcMotor arm = null;
     private DcMotor intake = null;
+    private Servo servoArm = null;
 
     boolean check = false;
     double i;
     boolean check2 = false;
+    static final double MAX_POS = 1.0;     // Maximum rotational position
+    static final double MIN_POS = 0.0;     // Minimum rotational position
+    double position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -96,6 +100,7 @@ public class Tel_GB extends LinearOpMode {
         DcMotor motorBackRight = hardwareMap.dcMotor.get("br");
         DcMotor motorArm = hardwareMap.dcMotor.get("arm");
         DcMotor motorIntake = hardwareMap.dcMotor.get("intake");
+        servoArm = hardwareMap.get(Servo.class, "sa");
 
         double leftPower;
         double rightPower;
@@ -107,16 +112,22 @@ public class Tel_GB extends LinearOpMode {
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        servoArm.setPosition(MAX_POS);
+
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+            //servoArm.setPosition(position);
+
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
             double armC = -gamepad2.left_stick_y;
             double intakeC = -gamepad2.right_stick_y;
+            boolean intakeboxservoUP = gamepad2.dpad_up;
+            boolean intakeboxservoDN = gamepad2.dpad_down;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -132,13 +143,18 @@ public class Tel_GB extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
-            leftPower    = Range.clip(armC, -1.0, 1.0) ;
+            leftPower = Range.clip(armC, -1.0, 1.0);
             //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            motorArm.setPower(armC/3);
+            motorArm.setPower(armC / 3);
             motorIntake.setPower(intakeC);
+
+            if (intakeboxservoUP) {
+                servoArm.setPosition(MIN_POS);
+            }
+            if (intakeboxservoDN) {
+                servoArm.setPosition(MAX_POS);
+            }
 
         }
     }
-
-
 }
