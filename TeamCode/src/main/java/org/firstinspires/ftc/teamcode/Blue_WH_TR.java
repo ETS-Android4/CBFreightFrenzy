@@ -155,7 +155,8 @@ x         */
 
     }
     @Override
-    public void runOpMode() throws InterruptedException{
+//    public void runOpMode() throws InterruptedException{
+    public void runOpMode() {
 
         teleUpdate("status", "Starting runOpMode");
         double rightPos = 0;
@@ -206,11 +207,6 @@ x         */
         //telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.update();
 
-        initVuforia();
-        initTfod();
-
-
-
         if (!opModeIsActive());
         {
             while (!opModeIsActive()) {
@@ -239,18 +235,24 @@ x         */
             }
 
             telemetry.update();
-            if (rightPos > 500) {
-                telemetry.addData("Right", "Duck");
-
-            } else if (rightPos < 500 && rightPos > 250) {
-                telemetry.addData("Middle", "Duck");
-
-            } else {
+//            if (rightPos > 500) {
+//                telemetry.addData("Right", "Duck");
+//
+//            } else if (rightPos < 500 && rightPos > 250) {
+//                telemetry.addData("Middle", "Duck");
+//
+//            } else {
                 telemetry.addData("Left", "Duck");
-                encoderDrive(10,1,"drive");
-                encoderDrive(-10,1,"drive");
+                encoderDrive(24,0.75,"drive");
+                encoderDrive(-24,0.75,"drive");
+                halfTurn("counterclockwise");
+                encoderDrive(24,0.75,"strafe");
+                encoderDrive(24,0.90,"drive");
+                fullTurn("counterclockwise");
+                encoderDrive(-24,0.20,"drive");
+                encoderDrive(-24,0.75,"drive");
 
-            }
+//            }
         }
 
 
@@ -416,7 +418,7 @@ x         */
     }
 
 
-    public void encoderDrive(double inches, double pow, String driveMode) throws InterruptedException {
+    public void encoderDrive(double inches, double pow, String driveMode) {
         if(driveMode.equals("drive")){
             //settargetposition is inverse
             //if setpower command for backward is -, then getpowers for both are both positive
@@ -535,7 +537,7 @@ x         */
         }
         robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Thread.sleep(100);
+//        Thread.sleep(100);
     }
 
 
@@ -611,7 +613,8 @@ x         */
 
     public void teleUpdate(String label, String description){
         if (robot != null && robot.FL != null && robot.FR != null) {
-            telemetry.addLine().addData("Current Position",  "Running at %7d :%7d", robot.FL.getCurrentPosition(), robot.FR.getCurrentPosition());
+            telemetry.addLine().addData("Current Position",  "Running at %7d :%7d :%7d :%7d", robot.FL.getCurrentPosition(), robot.FR.getCurrentPosition(), robot.BL.getCurrentPosition(), robot.BR.getCurrentPosition());
+            telemetry.addLine().addData("Target Position",  "Running at %7d :%7d :%7d :%7d", robot.FL.getTargetPosition(), robot.FR.getTargetPosition(), robot.BL.getTargetPosition(), robot.BR.getTargetPosition());
         }
         telemetry.addLine().addData(label + ": ", description);
         telemetry.update();
