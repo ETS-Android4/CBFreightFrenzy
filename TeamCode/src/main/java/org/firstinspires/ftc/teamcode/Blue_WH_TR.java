@@ -53,7 +53,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
-@Autonomous(name="RightRed", group="Pushbot")
+@Autonomous(name="Blue_WH_TR", group="Pushbot")
 
 public class Blue_WH_TR extends LinearOpMode
 {
@@ -235,24 +235,42 @@ x         */
             }
 
             telemetry.update();
-//            if (rightPos > 500) {
-//                telemetry.addData("Right", "Duck");
-//
-//            } else if (rightPos < 500 && rightPos > 250) {
-//                telemetry.addData("Middle", "Duck");
-//
-//            } else {
-                telemetry.addData("Left", "Duck");
-                encoderDrive(24,0.75,"drive");
-                encoderDrive(-24,0.75,"drive");
-                halfTurn("counterclockwise");
-                encoderDrive(24,0.75,"strafe");
-                encoderDrive(24,0.90,"drive");
-                fullTurn("counterclockwise");
-                encoderDrive(-24,0.20,"drive");
-                encoderDrive(-24,0.75,"drive");
+           if (rightPos > 500) {
+                telemetry.addData("Right", "Duck");
+               encoderDrive(6,0.8,"drive");
+               encoderDrive(-25,0.8,"strafe");
+               encoderDrive(14,0.8,"drive");
+               encoderDrive(-13,0.8,"drive");
+               fullTurn("counterclockwise");
+               encoderDrive(18,0.8,"drive");
+               encoderDrive(-14,0.8,"strafe");
+               encoderDrive(40,0.8,"drive");
 
-//            }
+
+            } else if (rightPos < 500 && rightPos > 250) {
+                telemetry.addData("Middle", "Duck");
+               encoderDrive(6,0.8,"drive");
+               encoderDrive(-25,0.8,"strafe");
+               encoderDrive(14,0.8,"drive");
+               encoderDrive(-13,0.8,"drive");
+               fullTurn("counterclockwise");
+               encoderDrive(18,0.8,"drive");
+               encoderDrive(-14,0.8,"strafe");
+               encoderDrive(40,0.8,"drive");
+
+           } else {
+                telemetry.addData("Left", "Duck");
+               encoderDrive(6,0.8,"drive");
+               encoderDrive(-25,0.8,"strafe");
+               encoderDrive(14,0.8,"drive");
+               encoderDrive(-13,0.8,"drive");
+               fullTurn("counterclockwise");
+               encoderDrive(18,0.8,"drive");
+               encoderDrive(-14,0.8,"strafe");
+               encoderDrive(40,0.8,"drive");
+
+
+           }
         }
 
 
@@ -261,8 +279,7 @@ x         */
         waitForStart();
 
 //        encoderDrive(30, "drive");
-//        Thread.sleep(1000);
-//        encoderDrive(-5,1.0,"strafe");
+//        Thread.sleep(1000);//        encoderDrive(-5,1.0,"strafe");
 //        encoderDrive(-66,0.9,"drive");
 //        halfTurn("counterclockwise");
 //        halfTurn("counterclockwise");
@@ -340,7 +357,7 @@ x         */
         resetAngle();
         if(type.equals("counterclockwise")){
             long time = System.currentTimeMillis();
-            while ((getAngle() <= 82 & (System.currentTimeMillis()<(time+6000))) && opModeIsActive()) {
+            while ((getAngle() <= 75 & (System.currentTimeMillis()<(time+6000))) && opModeIsActive()) {
                 power = (.75*2*0.684/5.063) * (-Math.pow((((getAngle())+2.9)/37.4),2) + 4.5*((getAngle()+2.9)/37.4)) + 0.159;
                 telemetry.addLine("power: "+power);
                 telemetry.addLine("angle: "+getAngle());

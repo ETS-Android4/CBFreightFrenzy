@@ -88,11 +88,11 @@ public class HardwareMecanum_TR
         CARO = hwMap.get(DcMotor.class, "caro");
         IARM = hwMap.get(DcMotor.class,"iarm");
         INTAKESERVO = hwMap.get(CRServo.class,"is");
-        FR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        FR.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         //This motor has to be set the opposite direction of all the other motors for it to work in sync with them
-        FL.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        BR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        BL.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        FL.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        BR.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        BL.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
 
         // Set all motors to run without encoders.
