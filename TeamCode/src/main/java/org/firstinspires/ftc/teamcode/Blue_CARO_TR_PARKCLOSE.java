@@ -238,7 +238,7 @@ x         */
             if (rightPos > 500) {
                 //level 3
                 telemetry.addData("Right", "Duck");
-                encoderDrive(8,0.8,"drive");
+                encoderDrive(7.6,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
 
                 robot.CARO.setPower(-0.25);
@@ -252,7 +252,7 @@ x         */
                 encoderDrive(1.5,0.8,"drive");
                 encoderDrive(50,0.8,"strafe");
                 fullTurn("counterclockwise");
-                encoderIARM(14,0.5);
+                encoderIARM(14.7,0.5);
 
                 encoderDrive(-10,0.6,"strafe");
 
@@ -263,14 +263,14 @@ x         */
                 robot.DROPSERVO.setPosition(-0.5);
                 robot.INTAKESERVO.setPower(0);
 
-                encoderIARM(-14,0.6);
+                encoderIARM(-14.7,0.6);
                 encoderDrive(-35,0.8,"drive");
                 encoderDrive(-14.75,0.8,"strafe");
                 encoderDrive(-10,0.8,"drive");
             } else if (rightPos < 500 && rightPos > 250) {
-                //Level 2
+                //Level 2*
                 telemetry.addData("Middle", "Duck");
-                encoderDrive(8,0.8,"drive");
+                encoderDrive(7.6,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
 
                 robot.CARO.setPower(-0.25);
@@ -284,7 +284,7 @@ x         */
                 encoderDrive(50,0.8,"strafe");
                 fullTurn("counterclockwise");
                 encoderDrive(2,0.5,"strafe");
-                encoderIARM(15.5,0.6);
+                encoderIARM(16,0.6);
                 robot.INTAKESERVO.setPower(1);
                 encoderDrive(-10,0.5,"strafe");
 
@@ -304,7 +304,7 @@ x         */
             } else {
                 telemetry.addData("Left", "Duck");
                 //level 3
-                encoderDrive(8,0.8,"drive");
+                encoderDrive(7.6,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
 
                 robot.CARO.setPower(-0.25);
