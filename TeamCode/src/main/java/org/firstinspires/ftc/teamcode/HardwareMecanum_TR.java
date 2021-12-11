@@ -63,6 +63,7 @@ public class HardwareMecanum_TR
     public DcMotor  CARO = null;
     public DcMotor  IARM = null;
     public CRServo  INTAKESERVO = null;
+    public Servo DROPSERVO = null;
 
 
 
@@ -88,6 +89,7 @@ public class HardwareMecanum_TR
         CARO = hwMap.get(DcMotor.class, "caro");
         IARM = hwMap.get(DcMotor.class,"iarm");
         INTAKESERVO = hwMap.get(CRServo.class,"is");
+        DROPSERVO = hwMap.get(Servo.class,"dropservo" );
         FR.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         //This motor has to be set the opposite direction of all the other motors for it to work in sync with them
         FL.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors

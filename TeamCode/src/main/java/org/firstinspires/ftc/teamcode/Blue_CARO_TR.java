@@ -236,59 +236,91 @@ x         */
 
             telemetry.update();
             if (rightPos > 500) {
+                //level 3
                 telemetry.addData("Right", "Duck");
-                encoderDrive(6,0.8,"drive");
+                encoderDrive(8,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
-                encoderDrive(-6,0.8,"drive");
-                robot.CARO.setPower(0.2);
+                encoderDrive(-1.75,0.8,"drive");
+                robot.CARO.setPower(-0.2);
                 runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                     telemetry.update();
                 }
-                encoderDrive(6,0.8,"drive");
-                encoderDrive(35,0.8,"strafe");
-                encoderDrive(15,0.8,"drive");
-                encoderDrive(-7,0.8,"drive");
+                encoderDrive(1.5,0.8,"drive");
+                encoderDrive(45,0.8,"strafe");
                 fullTurn("counterclockwise");
+                encoderIARM(14,0.6);
+                encoderDrive(-14,0.8,"strafe");
+
+
+                //arm code here
+                robot.DROPSERVO.setPosition(0.5);
+                robot.INTAKESERVO.setPower(1);
+                encoderDrive(7,0.8,"strafe");
+                robot.DROPSERVO.setPosition(-0.5);
+                robot.INTAKESERVO.setPower(-1);
+                encoderIARM(-14,0.6);
                 encoderDrive(55,0.8,"drive");
+
 
 
 
             } else if (rightPos < 500 && rightPos > 250) {
+                //Level 2
                 telemetry.addData("Middle", "Duck");
                 encoderDrive(8,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
-                encoderDrive(-6,0.8,"drive");
-                robot.CARO.setPower(0.2);
+                encoderDrive(-1.75,0.8,"drive");
+                robot.CARO.setPower(-0.25);
                 runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                     telemetry.update();
                 }
-                encoderDrive(6,0.8,"drive");
-                encoderDrive(40,0.8,"strafe");
-                encoderDrive(15,0.8,"drive");
-                encoderDrive(-7,0.8,"drive");
+                encoderDrive(1.5,0.8,"drive");
+                encoderDrive(45,0.8,"strafe");
                 fullTurn("counterclockwise");
+                encoderIARM(16,0.6);
+                encoderDrive(-14,0.8,"strafe");
+
+
+                robot.DROPSERVO.setPosition(0.5);
+                robot.INTAKESERVO.setPower(1);
+
+                encoderDrive(7,0.8,"strafe");
+                robot.DROPSERVO.setPosition(-0.5);
+                robot.INTAKESERVO.setPower(-1);
+                encoderIARM(-16,0.6);
                 encoderDrive(55,0.8,"drive");
+
 
             } else {
                 telemetry.addData("Left", "Duck");
+                //level 3
                 encoderDrive(8,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
-                encoderDrive(-6,0.8,"drive");
-                robot.CARO.setPower(0.2);
+                encoderDrive(-1.75,0.8,"drive");
+                robot.CARO.setPower(-0.2);
                 runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < 8.0)) {
+                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                     telemetry.update();
                 }
-                encoderDrive(6,0.8,"drive");
-                encoderDrive(40,0.8,"strafe");
-                encoderDrive(15,0.8,"drive");
-                encoderDrive(-4,0.8,"drive");
+                encoderDrive(1.5,0.8,"drive");
+                encoderDrive(45,0.8,"strafe");
                 fullTurn("counterclockwise");
+                encoderIARM(20,0.6);
+                encoderDrive(-14,0.8,"strafe");
+
+
+
+                robot.DROPSERVO.setPosition(0.5);
+                robot.INTAKESERVO.setPower(1);
+                encoderDrive(7,0.8,"strafe");
+                robot.DROPSERVO.setPosition(-0.5);
+                robot.INTAKESERVO.setPower(-1);
+                encoderIARM(-20,0.6);
                 encoderDrive(55,0.8,"drive");
 
 
@@ -645,6 +677,38 @@ x         */
         Thread.sleep(100);
     }
 
+    public void encoderIARM(double inches, double pow) {
+        robot.IARM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.IARM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.IARM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //settargetposition is inverse
+        //if setpower command for backward is -, then getpowers for both are both positive
+
+        int startPos1 = robot.IARM.getCurrentPosition();
+        robot.IARM.setTargetPosition((int) (inches * COUNTS_PER_INCH));
+        teleUpdate(robot.IARM.getCurrentPosition() + ", " + robot.IARM.getTargetPosition(), "");
+
+//            Thread.sleep(3000);
+        if (inches > 0) {
+            while ((robot.IARM.getTargetPosition() > robot.IARM.getCurrentPosition()) && opModeIsActive()) {
+                robot.IARM.setPower(pow);
+                telemetry.addLine(Integer.toString(robot.IARM.getTargetPosition()) + "<-target       current->" + Integer.toString(robot.IARM.getCurrentPosition()));
+                telemetry.update();
+            }
+            robot.IARM.setPower(0);
+        } else {
+            while ((robot.IARM.getTargetPosition() < robot.IARM.getCurrentPosition()) && opModeIsActive()) {
+                robot.IARM.setPower(-pow);
+                telemetry.addLine(Integer.toString(robot.IARM.getTargetPosition()) + "<-target       current->" + Integer.toString(robot.IARM.getCurrentPosition()));
+                telemetry.update();
+            }
+            robot.IARM.setPower(0);
+        }
+
+        robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        Thread.sleep(100);
+    }
 
 
 

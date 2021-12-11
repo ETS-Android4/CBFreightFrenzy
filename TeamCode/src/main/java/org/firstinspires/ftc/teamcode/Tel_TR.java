@@ -131,12 +131,13 @@ public class Tel_TR extends OpMode {
         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
         double caroPower;
+        double caroPower1;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
+        double frontLeftPower = (y + x - rx) / denominator;
+        double backLeftPower = (y - x - rx) / denominator;
+        double frontRightPower = (y - x + rx) / denominator;
+        double backRightPower = (y + x + rx) / denominator;
 
         frontLeft.setPower(frontLeftPower);
         backLeft.setPower(backLeftPower);
@@ -151,10 +152,12 @@ public class Tel_TR extends OpMode {
         //double strafe = -gamepad1.right_stick_x;
         //double drive = gamepad1.left_stick_y;
         //double turn = gamepad1.left_stick_x;
-        double caro1 = gamepad2.left_trigger;
+        double caro1 = gamepad1.left_trigger;
+        double caro2 = gamepad1.right_trigger;
         //leftPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
         //rightPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
         caroPower = Range.clip(caro1 + 0,-1.0,1);
+        caroPower1 = Range.clip(caro2 + 0,-1.0,1);
 //        turnPower = Range.clip(turn1+0,-1.0,1.0);
 
         // Tank Mode uses one stick to control each wheel.
@@ -168,24 +171,21 @@ public class Tel_TR extends OpMode {
     //    backLeft.setPower(leftPower);
      //   backRight.setPower(rightPower);
         caro.setPower(caroPower);
+        caro.setPower(-caroPower1);
 
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        double armPower;
+        double armw = gamepad2.right_stick_y;
+        armPower = Range.clip(armw + 0,-1.0,1);
 
         intakeARM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        if (gamepad2.dpad_down) {
-            intakeARM.setPower(0.4);
-        } else if (!gamepad2.dpad_down) {
-            intakeARM.setPower(0);
+        intakeARM.setPower(armPower);
 
-            if (gamepad2.dpad_up) {
-                intakeARM.setPower(-0.4);
-            } else if (!gamepad2.dpad_up) {
-                intakeARM.setPower(0);
-            }
-        }
+
+
 
         if (gamepad2.a) {
             intakeServo.setPower(-1);
@@ -196,10 +196,10 @@ public class Tel_TR extends OpMode {
         }
 
 
-        if (gamepad2.x) {
+        if (gamepad2.dpad_up) {
             dropservo.setPosition(0.5);
         }
-        if (gamepad2.y) {
+        if (gamepad2.dpad_down) {
             dropservo.setPosition(0);
         }
 

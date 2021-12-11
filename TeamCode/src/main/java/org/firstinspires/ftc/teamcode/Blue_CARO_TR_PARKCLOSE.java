@@ -53,35 +53,36 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
-@Autonomous(name="Blue_WH_TR", group="Pushbot")
+@Autonomous(name="Blue_CARO_TR_PARKCLOSE", group="Pushbot")
 
-public class Blue_WH_TR extends LinearOpMode {
+public class Blue_CARO_TR_PARKCLOSE extends LinearOpMode
+{
 
     private static int valQUAD = -1;
     private static int valSingle = -1;
     private static int valZero = -1;
 
-    private static float offsetX = .75f / 8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
-    private static float offsetY = 1.5f / 8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
+    private static float offsetX = .75f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
+    private static float offsetY = 1.5f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f / 8f + offsetX, 4f / 8f + offsetY};//0 = col, 1 = row
-    private static float[] leftPos = {2f / 8f + offsetX, 4f / 8f + offsetY};
-    private static float[] rightPos = {6f / 8f + offsetX, 4f / 8f + offsetY};
+    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
+    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
 
 
     //DRIVE, IMU, AND ACCEL CONSTANTS
 
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double globalAngle, power = .50, correction, rotation;
-    PIDController pidRotate, pidDrive;
+    double                  globalAngle, power = .50, correction, rotation;
+    PIDController           pidRotate, pidDrive;
     HardwareMecanum_TR robot = new HardwareMecanum_TR();
     private ElapsedTime runtime = new ElapsedTime();
-    static final double COUNTS_PER_MOTOR_REV = 1120;    //ANDYMARK Motor Encoder ticks
+    static final double COUNTS_PER_MOTOR_REV = 1120 ;    //ANDYMARK Motor Encoder ticks
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0 ;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static double DRIVE_SPEED = 0.9;
+    static  double DRIVE_SPEED = 0.9;
     static final double TURN_SPEED = 0.575;
     LogisticFunction function;
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
@@ -122,7 +123,6 @@ public class Blue_WH_TR extends LinearOpMode {
 
     String VUFORIA_KEY =
             "  AQPmkNv/////AAABmdxLYQ/wu0AklzJL8KSxv7JBzxPLjVotEKmYbHOuh2IRfiFORiDFAmnVudtYfU2lnfHtY52js++UYJP1GQPU2MyXc0SshJVaAVdqYSSs+AXj5hk53ahu6Ce/gwCzdgTQ012TbwUTXJj69VydVB+q75b+UAS/f7U+ddgTOPVulb688iR7I/7aFKTvGC8eeJPM4hPGJOB+zbcI8gd9YErYqhQL4Ot/ek7K0UogrjI2/W4qRxvWlP0GXm0ymybEMlDGovIZWhYykufVvwwAL+TLZld61pJ9m4AMfvzIrvmrIZO5iAmVwNHBtXBiaugvHCgooTncQrn0OcjebK8+Qj7JbDqlcxG/3sVK+RKIcUf9DnWv ";
-
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -154,7 +154,6 @@ x         */
         //if ()
 
     }
-
     @Override
 //    public void runOpMode() throws InterruptedException{
     public void runOpMode() {
@@ -184,22 +183,23 @@ x         */
         //robot.FoundationMoverRight.setPosition(0.88);
         robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-        teleUpdate("WWWWWWWWWWWWWWWWWWWWWWWWWWWWW", "");
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+        teleUpdate("WWWWWWWWWWWWWWWWWWWWWWWWWWWWW","");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        teleUpdate("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEee", "");
+        teleUpdate("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEee","");
         imu.initialize(parameters);
-        teleUpdate("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQqqq", "");
+        teleUpdate("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQqqq","");
         pidRotate = new PIDController(.003, .00003, 0);
-        teleUpdate("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "");
+        teleUpdate("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA","");
         pidDrive = new PIDController(.05, 0, 0);
 
         telemetry.addData("Mode", "calibrating...");
         telemetry.update();
-        while (!isStopRequested() && !imu.isGyroCalibrated()) {
+        while (!isStopRequested() && !imu.isGyroCalibrated())
+        {
             sleep(50);
             idle();
         }
@@ -207,7 +207,7 @@ x         */
         //telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.update();
 
-        if (!opModeIsActive()) ;
+        if (!opModeIsActive());
         {
             while (!opModeIsActive()) {
                 if (tfod != null) {
@@ -235,72 +235,111 @@ x         */
             }
 
             telemetry.update();
-            if (rightPos > 500) { //level 3
+            if (rightPos > 500) {
+                //level 3
                 telemetry.addData("Right", "Duck");
-                encoderDrive(6, 0.8, "drive");
-                encoderDrive(-25, 0.8, "strafe");
+                encoderDrive(8,0.8,"drive");
+                encoderDrive(-23,0.8,"strafe");
 
+                robot.CARO.setPower(-0.25);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                }
+                robot.CARO.setPower(0);
+
+                encoderDrive(1.5,0.8,"drive");
+                encoderDrive(50,0.8,"strafe");
                 fullTurn("counterclockwise");
-                encoderIARM(14,0.6);
-                encoderDrive(-14, 0.8, "strafe");
+                encoderIARM(14,0.5);
 
+                encoderDrive(-10,0.6,"strafe");
+
+                //arm code here
                 robot.DROPSERVO.setPosition(0.5);
-                robot.INTAKESERVO.setPower(1);
-                encoderDrive(13, 0.8, "strafe");
+                robot.INTAKESERVO.setPower(0.75);
+                encoderDrive(8,0.6,"strafe");
+                robot.DROPSERVO.setPosition(-0.5);
+                robot.INTAKESERVO.setPower(0);
+
                 encoderIARM(-14,0.6);
-                robot.DROPSERVO.setPosition(-0.5);
-                robot.INTAKESERVO.setPower(0);
-                encoderDrive(18, 0.8, "drive");
-                encoderDrive(-14, 0.8, "strafe");
-                encoderDrive(65, 0.6, "drive");
-
-
-
+                encoderDrive(-35,0.8,"drive");
+                encoderDrive(-14.75,0.8,"strafe");
+                encoderDrive(-10,0.8,"drive");
             } else if (rightPos < 500 && rightPos > 250) {
-                // Level 2
+                //Level 2
                 telemetry.addData("Middle", "Duck");
-                encoderDrive(6, 0.8, "drive");
-                encoderDrive(-25, 0.8, "strafe");
+                encoderDrive(8,0.8,"drive");
+                encoderDrive(-23,0.8,"strafe");
 
+                robot.CARO.setPower(-0.25);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                }
+                encoderDrive(1.5,0.8,"drive");
+                robot.CARO.setPower(0);
+                encoderDrive(50,0.8,"strafe");
                 fullTurn("counterclockwise");
-                encoderIARM(16,0.6);
-                encoderDrive(-8, 0.8, "strafe");
-                robot.DROPSERVO.setPosition(0.5);
+                encoderDrive(2,0.5,"strafe");
+                encoderIARM(15.5,0.6);
                 robot.INTAKESERVO.setPower(1);
+                encoderDrive(-10,0.5,"strafe");
 
-                encoderDrive(9, 0.8, "strafe");
-                encoderIARM(-16,0.6);
+
+                robot.DROPSERVO.setPosition(0.5);
+
+
+                encoderDrive(10,0.8,"strafe");
                 robot.DROPSERVO.setPosition(-0.5);
                 robot.INTAKESERVO.setPower(0);
-                encoderDrive(18, 0.8, "drive");
-                encoderDrive(-14, 0.8, "strafe");
-                encoderDrive(65, 0.8, "drive");
+                encoderIARM(-16,0.6);
+                encoderDrive(-35,0.8,"drive");
+                encoderDrive(-14.75,0.8,"strafe");
+                encoderDrive(-10,0.8,"drive");
+                encoderDrive(-4,0.8,"strafe");
 
             } else {
                 telemetry.addData("Left", "Duck");
-                //level 1
-                encoderDrive(6, 0.8, "drive");
-                encoderDrive(-28, 0.8, "strafe");
+                //level 3
+                encoderDrive(8,0.8,"drive");
+                encoderDrive(-23,0.8,"strafe");
+
+                robot.CARO.setPower(-0.25);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                }
+                encoderDrive(1.5,0.8,"drive");
+                robot.CARO.setPower(0);
+                encoderDrive(50,0.8,"strafe");
                 fullTurn("counterclockwise");
+                encoderDrive(5,0.8,"strafe");
                 encoderIARM(19,0.6);
                 robot.INTAKESERVO.setPower(1);
-                encoderDrive(-8.5, 0.8, "strafe");
-                //robot.DROPSERVO.setPosition(0.5);
 
-                encoderDrive(15, 0.8, "strafe");
-                encoderIARM(-19,0.6);
-                //robot.DROPSERVO.setPosition(-0.5);
+                encoderDrive(-12,0.8,"strafe");
+
+
+
+                robot.DROPSERVO.setPosition(0.5);
+
+                encoderDrive(10,0.8,"strafe");
+                robot.DROPSERVO.setPosition(0);
                 robot.INTAKESERVO.setPower(0);
-                encoderDrive(18, 0.8, "drive");
-                encoderDrive(-15, 0.8, "strafe");
-                encoderDrive(20, 0.8, "drive");
-                encoderDrive(-16, 0.8, "strafe");
-                encoderDrive(25, 0.8, "drive");
-
+                encoderIARM(-20,0.6);
+                encoderDrive(-35,0.9,"drive");
+                encoderDrive(-18,0.9,"strafe");
+                encoderDrive(-10,0.9,"drive");
 
 
             }
         }
+
+
 
 
         waitForStart();
@@ -357,35 +396,37 @@ x         */
         robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-    public void blockServoControlLeft(boolean control) {
-        if (control) {
+    public void blockServoControlLeft(boolean control){
+        if(control){
 
             //robot.FoundationMoverLeft.setPosition(0.8);    //Pull Position 0.75
-        } else {
+        }
+
+        else  {
             //robot.FoundationMoverLeft.setPosition(0.3);    //Pull Position 0.75
         }
 
     }
-
-    public void blockServoControlRight(boolean control) {
-        if (control) {
+    public void blockServoControlRight(boolean control){
+        if(control){
 
             //robot.FoundationMoverRight.setPosition(0.2);    //Pull Position 0.75
-        } else {
+        }
+
+        else  {
             //robot.FoundationMoverRight.setPosition(0.88);    //Pull Position 0.75
         }
 
     }
 
-    public void fullTurn(String type) {
+    public void fullTurn(String type){
         resetAngle();
-        if (type.equals("counterclockwise")) {
+        if(type.equals("counterclockwise")){
             long time = System.currentTimeMillis();
-            while ((getAngle() <= 75 & (System.currentTimeMillis() < (time + 6000))) && opModeIsActive()) {
-                power = (.75 * 2 * 0.684 / 5.063) * (-Math.pow((((getAngle()) + 2.9) / 37.4), 2) + 4.5 * ((getAngle() + 2.9) / 37.4)) + 0.159;
-                telemetry.addLine("power: " + power);
-                telemetry.addLine("angle: " + getAngle());
+            while ((getAngle() <= 75 & (System.currentTimeMillis()<(time+6000))) && opModeIsActive()) {
+                power = (.75*2*0.684/5.063) * (-Math.pow((((getAngle())+2.9)/37.4),2) + 4.5*((getAngle()+2.9)/37.4)) + 0.159;
+                telemetry.addLine("power: "+power);
+                telemetry.addLine("angle: "+getAngle());
                 telemetry.update();
                 robot.FL.setPower(power);
                 robot.FR.setPower(-power);
@@ -397,12 +438,12 @@ x         */
             robot.BR.setPower(0);
             robot.BL.setPower(0);
         }
-        if (type.equals("clockwise")) {
+        if(type.equals("clockwise")){
             long time = System.currentTimeMillis();
-            while (getAngle() >= -180 && (System.currentTimeMillis() < (time + 3000))) {
-                power = (.75 * 2 * 0.684 / 5.063) * (-Math.pow((((-getAngle()) + 2.9) / 37.4), 2) + 4.5 * ((-getAngle() + 2.9) / 37.4)) + 0.159;
-                telemetry.addLine("" + power);
-                telemetry.addLine("" + getAngle());
+            while (getAngle() >= -180 && (System.currentTimeMillis()<(time+3000))) {
+                power = (.75*2*0.684/5.063) * (-Math.pow((((-getAngle())+2.9)/37.4),2) + 4.5*((-getAngle()+2.9)/37.4)) + 0.159;
+                telemetry.addLine(""+power);
+                telemetry.addLine(""+getAngle());
                 telemetry.update();
                 robot.FL.setPower(-power);
                 robot.FR.setPower(power);
@@ -418,14 +459,14 @@ x         */
         robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void halfTurn(String type) {
-        telemetry.addLine("performing half turn " + type);
+    public void halfTurn(String type){
+        telemetry.addLine("performing half turn " +  type);
         resetAngle();
-        if (type.equals("counterclockwise")) {
+        if(type.equals("counterclockwise")){
             long time = System.currentTimeMillis();
             telemetry.addLine("time: " + time);
-            while (getAngle() <= 87 & (System.currentTimeMillis() < (time + 10000))) {
-                power = (0.75 /*used to be .75*/ * 0.684 / 5.063) * (-Math.pow((((getAngle()) + 6.5) / 19.5), 2) + 4.5 * ((getAngle() + 6.5) / 19.5)) + 0.159;
+            while (getAngle() <= 87 & (System.currentTimeMillis()<(time+10000))) {
+                power = (0.75 /*used to be .75*/ *0.684/5.063) * (-Math.pow((((getAngle())+6.5)/19.5),2) + 4.5*((getAngle()+6.5)/19.5)) + 0.159;
                 telemetry.addLine("power: " + power);
                 telemetry.update();
                 telemetry.addLine("angle: " + getAngle());
@@ -440,11 +481,11 @@ x         */
             robot.FR.setPower(0);
             robot.BL.setPower(0);
         }
-        if (type.equals("clockwise")) {
+        if(type.equals("clockwise")){
             long time = System.currentTimeMillis();
-            while (getAngle() >= -82 && (System.currentTimeMillis() < (time + 2000))) {
-                power = (.75 * 0.684 / 5.063) * (-Math.pow((((-getAngle()) + 6.5) / 19.5), 2) + 4.5 * ((-getAngle() + 6.5) / 19.5)) + 0.159;
-                teleUpdate("" + power, "");
+            while (getAngle() >= -82 && (System.currentTimeMillis()<(time+2000))) {
+                power = (.75*0.684/5.063) * (-Math.pow((((-getAngle())+6.5)/19.5),2) + 4.5*((-getAngle()+6.5)/19.5)) + 0.159;
+                teleUpdate(""+power,"");
                 robot.FL.setPower(-power);
                 robot.BR.setPower(power);
                 robot.FR.setPower(power);
@@ -461,7 +502,7 @@ x         */
 
 
     public void encoderDrive(double inches, double pow, String driveMode) {
-        if (driveMode.equals("drive")) {
+        if(driveMode.equals("drive")){
             //settargetposition is inverse
             //if setpower command for backward is -, then getpowers for both are both positive
             pidDrive.setSetpoint(0);
@@ -473,44 +514,45 @@ x         */
             int startPos2 = robot.BL.getCurrentPosition();
             int startPos3 = robot.FR.getCurrentPosition();
             int startPos4 = robot.BR.getCurrentPosition();
-            robot.FL.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-            robot.BR.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-            robot.FR.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-            robot.BL.setTargetPosition((int) (inches * COUNTS_PER_INCH));
+            robot.FL.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+            robot.BR.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+            robot.FR.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+            robot.BL.setTargetPosition((int)(inches*COUNTS_PER_INCH));
             double currentPosInches;
-            if (inches <= 0) {
-                robot.FL.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                robot.BR.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                robot.FR.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                robot.BL.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
+            if(inches<=0) {
+                robot.FL.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                robot.BR.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                robot.FR.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                robot.BL.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
                 //robot.changeSpeed(power);
-                while (robot.FR.getTargetPosition() > robot.FR.getCurrentPosition() ||
-                        robot.FL.getTargetPosition() > robot.FL.getCurrentPosition() ||
-                        robot.BR.getTargetPosition() > robot.BR.getCurrentPosition() ||
-                        robot.BL.getTargetPosition() > robot.BL.getCurrentPosition()) {
+                while (robot.FR.getTargetPosition()>robot.FR.getCurrentPosition()||
+                        robot.FL.getTargetPosition()>robot.FL.getCurrentPosition()||
+                        robot.BR.getTargetPosition()>robot.BR.getCurrentPosition()||
+                        robot.BL.getTargetPosition()>robot.BL.getCurrentPosition()) {
                     correction = pidDrive.performPID(getAngle());
                     currentPosInches = ((robot.FL.getCurrentPosition() - startPos1) / COUNTS_PER_INCH);
-                    teleUpdate("CURRENTPOSINCHES: " + currentPosInches + "", "");
+                    teleUpdate("CURRENTPOSINCHES: "+currentPosInches+"","");
                     power = function.getPowerAt(currentPosInches, -inches, pow, "drive");
                     robot.FL.setPower(power + correction);
                     robot.BR.setPower(power - correction);
                     robot.FR.setPower(power - correction);
                     robot.BL.setPower(power + correction);
                 }
-            } else {
+            }
+            else{
                 //robot.changeSpeed(-power);
-                robot.FL.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                robot.BR.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                robot.FR.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                robot.BL.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-                while (robot.FR.getTargetPosition() < robot.FR.getCurrentPosition() ||
-                        robot.FL.getTargetPosition() < robot.FL.getCurrentPosition() ||
-                        robot.BR.getTargetPosition() < robot.BR.getCurrentPosition() ||
-                        robot.BL.getTargetPosition() < robot.BL.getCurrentPosition()) {
+                robot.FL.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                robot.BR.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                robot.FR.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                robot.BL.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+                while (robot.FR.getTargetPosition()<robot.FR.getCurrentPosition()||
+                        robot.FL.getTargetPosition()<robot.FL.getCurrentPosition()||
+                        robot.BR.getTargetPosition()<robot.BR.getCurrentPosition()||
+                        robot.BL.getTargetPosition()<robot.BL.getCurrentPosition()) {
                     correction = pidDrive.performPID(getAngle());
                     currentPosInches = ((robot.FL.getCurrentPosition() - startPos1) / COUNTS_PER_INCH * -1);
                     power = -function.getPowerAt(currentPosInches, inches, pow, "drive");
-                    teleUpdate("POWER: " + power + "", "");
+                    teleUpdate("POWER: "+ power+"","");
                     robot.FL.setPower((power + correction));
                     robot.BR.setPower((power - correction));
                     robot.FR.setPower((power - correction));
@@ -518,7 +560,8 @@ x         */
                 }
             }
             robot.changeSpeed(0);
-        } else if (driveMode.equals("strafe")) {/////LEFT IS POSITIVE
+        }
+        else if(driveMode.equals("strafe")){/////LEFT IS POSITIVE
             pidDrive.setSetpoint(0);
             pidDrive.setOutputRange(0, power);
             pidDrive.setInputRange(-90, 90);
@@ -529,10 +572,10 @@ x         */
             int startPos2 = robot.BL.getCurrentPosition();
             int startPos3 = robot.FR.getCurrentPosition();
             int startPos4 = robot.BR.getCurrentPosition();
-            robot.FL.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-            robot.BR.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-            robot.FR.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-            robot.BL.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
+            robot.FL.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+            robot.BR.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+            robot.FR.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+            robot.BL.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
 //            telemetry.addLine(robot.frontLeft.getTargetPosition()+" <- TARGET");
 //            telemetry.addLine(robot.frontLeft.getCurrentPosition()+" <- Current");
 //            telemetry.update();
@@ -540,32 +583,33 @@ x         */
             double currentPosInches;
             //power = 0.9;
             robot.changeSpeed(power);
-            if (inches > 0) {
-                while (robot.FR.getTargetPosition() < robot.FR.getCurrentPosition() ||
-                        robot.FL.getTargetPosition() > robot.FL.getCurrentPosition() ||
-                        robot.BR.getTargetPosition() > robot.BR.getCurrentPosition() ||
-                        robot.BL.getTargetPosition() < robot.BL.getCurrentPosition()) {
+            if(inches>0) {
+                while (robot.FR.getTargetPosition()<robot.FR.getCurrentPosition()||
+                        robot.FL.getTargetPosition()>robot.FL.getCurrentPosition()||
+                        robot.BR.getTargetPosition()>robot.BR.getCurrentPosition()||
+                        robot.BL.getTargetPosition()<robot.BL.getCurrentPosition()) {
                     telemetry.addData("Correction", correction);
-                    telemetry.addLine(robot.FL.getCurrentPosition() + " <- Current");
+                    telemetry.addLine(robot.FL.getCurrentPosition()+" <- Current");
                     telemetry.update();
                     correction = pidDrive.performPID(getAngle());
                     currentPosInches = ((robot.FR.getCurrentPosition() - startPos1) / COUNTS_PER_INCH);
-                    power = function.getPowerAt(currentPosInches, inches, pow, "strafe") * 1.1;
+                    power = function.getPowerAt(currentPosInches, inches, pow, "strafe")*1.1;
                     robot.FL.setPower((power + correction));
                     robot.BR.setPower((power - correction));
                     robot.FR.setPower(-(power + correction));
                     robot.BL.setPower(-(power - correction));             //STRAFE
                 }
-            } else {
-                while (robot.FR.getTargetPosition() > robot.FR.getCurrentPosition() ||
-                        robot.FL.getTargetPosition() < robot.FL.getCurrentPosition() ||
-                        robot.BR.getTargetPosition() < robot.BR.getCurrentPosition() ||
-                        robot.BL.getTargetPosition() > robot.BL.getCurrentPosition()) {
+            }
+            else{
+                while (robot.FR.getTargetPosition()>robot.FR.getCurrentPosition()||
+                        robot.FL.getTargetPosition()<robot.FL.getCurrentPosition()||
+                        robot.BR.getTargetPosition()<robot.BR.getCurrentPosition()||
+                        robot.BL.getTargetPosition()>robot.BL.getCurrentPosition()) {
                     telemetry.addData("Correction", correction);
                     telemetry.update();
                     correction = pidDrive.performPID(getAngle());
                     currentPosInches = ((robot.FR.getCurrentPosition() - startPos1) / COUNTS_PER_INCH * -1);
-                    power = -function.getPowerAt(currentPosInches, -inches, pow, "strafe") * 1.1;
+                    power = -function.getPowerAt(currentPosInches, -inches, pow, "strafe")*1.1;
                     robot.FL.setPower((power + correction));
                     robot.BR.setPower((power - correction));
                     robot.FR.setPower(-(power + correction));
@@ -580,6 +624,8 @@ x         */
     }
 
 
+
+
     public void encoderDriveStrafe(double inches, double pow) throws InterruptedException {
         /////LEFT IS POSITIVE
         pidDrive.setSetpoint(0);
@@ -592,10 +638,10 @@ x         */
         int startPos2 = robot.BL.getCurrentPosition();
         int startPos3 = robot.FR.getCurrentPosition();
         int startPos4 = robot.BR.getCurrentPosition();
-        robot.FL.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-        robot.BR.setTargetPosition((int) (inches * COUNTS_PER_INCH));
-        robot.FR.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
-        robot.BL.setTargetPosition((int) (-inches * COUNTS_PER_INCH));
+        robot.FL.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+        robot.BR.setTargetPosition((int)(inches*COUNTS_PER_INCH));
+        robot.FR.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
+        robot.BL.setTargetPosition((int)(-inches*COUNTS_PER_INCH));
 //            telemetry.addLine(robot.frontLeft.getTargetPosition()+" <- TARGET");
 //            telemetry.addLine(robot.frontLeft.getCurrentPosition()+" <- Current");
 //            telemetry.update();
@@ -603,13 +649,13 @@ x         */
         double currentPosInches;
         //power = 0.9;
         robot.changeSpeed(power);
-        if (inches > 0) {
-            while (robot.FR.getTargetPosition() < robot.FR.getCurrentPosition() ||
-                    robot.FL.getTargetPosition() > robot.FL.getCurrentPosition() ||
-                    robot.BR.getTargetPosition() > robot.BR.getCurrentPosition() ||
-                    robot.BL.getTargetPosition() < robot.BL.getCurrentPosition()) {
+        if(inches>0) {
+            while (robot.FR.getTargetPosition()<robot.FR.getCurrentPosition()||
+                    robot.FL.getTargetPosition()>robot.FL.getCurrentPosition()||
+                    robot.BR.getTargetPosition()>robot.BR.getCurrentPosition()||
+                    robot.BL.getTargetPosition()<robot.BL.getCurrentPosition()) {
                 telemetry.addData("Correction", correction);
-                telemetry.addLine(robot.FL.getCurrentPosition() + " <- Current");
+                telemetry.addLine(robot.FL.getCurrentPosition()+" <- Current");
                 telemetry.update();
                 correction = pidDrive.performPID(getAngle());
                 currentPosInches = ((robot.FR.getCurrentPosition() - startPos1) / COUNTS_PER_INCH);
@@ -619,11 +665,12 @@ x         */
                 robot.FR.setPower(-(power + correction));
                 robot.BL.setPower(-(power - correction));             //STRAFE
             }
-        } else {
-            while (robot.FR.getTargetPosition() > robot.FR.getCurrentPosition() ||
-                    robot.FL.getTargetPosition() < robot.FL.getCurrentPosition() ||
-                    robot.BR.getTargetPosition() < robot.BR.getCurrentPosition() ||
-                    robot.BL.getTargetPosition() > robot.BL.getCurrentPosition()) {
+        }
+        else{
+            while (robot.FR.getTargetPosition()>robot.FR.getCurrentPosition()||
+                    robot.FL.getTargetPosition()<robot.FL.getCurrentPosition()||
+                    robot.BR.getTargetPosition()<robot.BR.getCurrentPosition()||
+                    robot.BL.getTargetPosition()>robot.BL.getCurrentPosition()) {
                 telemetry.addData("Correction", correction);
                 telemetry.update();
                 correction = pidDrive.performPID(getAngle());
@@ -674,7 +721,6 @@ x         */
         robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        Thread.sleep(100);
     }
-
 
 
 
