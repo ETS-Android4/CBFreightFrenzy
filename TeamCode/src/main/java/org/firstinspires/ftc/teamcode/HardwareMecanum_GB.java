@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class HardwareMecanum_GB {
@@ -13,7 +14,8 @@ public class HardwareMecanum_GB {
     public DcMotor  BL  = null;
     public DcMotor  CARO = null;
     public DcMotor  IARM = null;
-    public CRServo INTAKESERVO = null;
+    public DcMotor INTAKESERVO = null;
+    public Servo DROPSERVO = null;
 
 
 
@@ -32,18 +34,20 @@ public class HardwareMecanum_GB {
         hwMapG = ahwMap;
 
         // Define and Initialize Motors
+
         FR = hwMapG.get(DcMotor.class, "fr");
         FL = hwMapG.get(DcMotor.class, "fl");
         BR = hwMapG.get(DcMotor.class, "br");
         BL = hwMapG.get(DcMotor.class, "bl");
         CARO = hwMapG.get(DcMotor.class, "caro");
         IARM = hwMapG.get(DcMotor.class,"iarm");
-        INTAKESERVO = hwMapG.get(CRServo.class,"is");
+        INTAKESERVO = hwMapG.get(DcMotor.class,"is");
         FR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         //This motor has to be set the opposite direction of all the other motors for it to work in sync with them
         FL.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         BR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         BL.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+
 
 
         // Set all motors to run without encoders.
