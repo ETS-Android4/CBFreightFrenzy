@@ -15,7 +15,7 @@ public class HardwareMecanum_GB {
     public DcMotor  CARO = null;
     public DcMotor  IARM = null;
     public DcMotor INTAKESERVO = null;
-    public Servo DROPSERVO = null;
+    public Servo servoArm = null;
 
 
 
@@ -41,6 +41,7 @@ public class HardwareMecanum_GB {
         BL = hwMapG.get(DcMotor.class, "bl");
         CARO = hwMapG.get(DcMotor.class, "caro");
         IARM = hwMapG.get(DcMotor.class,"iarm");
+        servoArm = hwMapG.get(Servo.class, "sa");
         INTAKESERVO = hwMapG.get(DcMotor.class,"is");
         FR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         //This motor has to be set the opposite direction of all the other motors for it to work in sync with them

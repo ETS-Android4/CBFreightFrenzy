@@ -86,8 +86,8 @@ public class GB_SLOW extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("bl");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("fr");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("br");
-        DcMotor motorArm = hardwareMap.dcMotor.get("arm");
-        DcMotor motorIntake = hardwareMap.dcMotor.get("intake");
+        DcMotor motorArm = hardwareMap.dcMotor.get("iarm");
+        DcMotor motorIntake = hardwareMap.dcMotor.get("is");
         DcMotor caro = hardwareMap.dcMotor.get("caro");
 
         servoArm = hardwareMap.get(Servo.class, "sa");
@@ -98,7 +98,7 @@ public class GB_SLOW extends LinearOpMode {
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         //motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 

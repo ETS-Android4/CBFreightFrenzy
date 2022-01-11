@@ -162,7 +162,6 @@ x         */
         double rightPos = 0;
         initVuforia();
         initTfod();
-        robot.init(hardwareMap);
         if (tfod != null) {
             tfod.activate();
             tfod.setZoom(1.75, 16.0 / 9.0);
@@ -174,7 +173,7 @@ x         */
         //robot.FoundationMoverRight.setPosition(0.88);
         function = new LogisticFunction(0.6);
         teleUpdate("status", "Starting runOpMode");
-        robot.init(hardwareMap);
+
         robot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -238,32 +237,32 @@ x         */
             if (rightPos > 500) {
                 //level 3
                 telemetry.addData("Right", "Duck");
-                encoderDrive(-8,0.8,"drive");
-                encoderDrive(-3,0.8,"strafe");
-                encoderDrive(1.75,0.8,"drive");
-                robot.CARO.setPower(-0.2);
-                runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
-                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                    telemetry.update();
-                }
-                encoderDrive(1.5,0.8,"drive");
-                encoderDrive(45,0.8,"strafe");
-                fullTurn("counterclockwise");
-                encoderIARM(14,0.6);
-                encoderDrive(-14,0.8,"strafe");
-
-
-                //arm code here
-                robot.DROPSERVO.setPosition(0.5);
-                robot.INTAKESERVO.setPower(1);
-                encoderDrive(7,0.8,"strafe");
-                robot.DROPSERVO.setPosition(-0.5);
-                robot.INTAKESERVO.setPower(-1);
-                encoderIARM(-14,0.6);
-                encoderDrive(55,0.8,"drive");
-
-
+                encoderDrive(-8,06,"drive");
+//                encoderDrive(-3,0.8,"strafe");
+//                encoderDrive(1.75,0.8,"drive");
+//                robot.CARO.setPower(-0.2);
+//                runtime.reset();
+//                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
+//                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+//                    telemetry.update();
+//                }
+//                encoderDrive(1.5,0.8,"drive");
+//                encoderDrive(45,0.8,"strafe");
+//                fullTurn("counterclockwise");
+//                encoderIARM(14,0.6);
+//                encoderDrive(-14,0.8,"strafe");
+//
+//
+//                //arm code here
+//                robot.servoArm.setPosition(0.5);
+//                robot.INTAKESERVO.setPower(1);
+//                encoderDrive(7,0.8,"strafe");
+//                robot.servoArm.setPosition(-0.5);
+//                robot.INTAKESERVO.setPower(-1);
+//                encoderIARM(-14,0.6);
+//                encoderDrive(55,0.8,"drive");
+//
+//
 
 
             } else if (rightPos < 500 && rightPos > 250) {
@@ -285,11 +284,11 @@ x         */
                 encoderDrive(-14,0.8,"strafe");
 
 
-                robot.DROPSERVO.setPosition(0.5);
+                robot.servoArm.setPosition(0.5);
                 robot.INTAKESERVO.setPower(1);
 
                 encoderDrive(7,0.8,"strafe");
-                robot.DROPSERVO.setPosition(-0.5);
+                robot.servoArm.setPosition(-0.5);
                 robot.INTAKESERVO.setPower(-1);
                 encoderIARM(-16,0.6);
                 encoderDrive(55,0.8,"drive");
@@ -298,30 +297,11 @@ x         */
             } else {
                 telemetry.addData("Left", "Duck");
                 //level 3
-                encoderDrive(8,0.8,"drive");
-                encoderDrive(-23,0.8,"strafe");
-                encoderDrive(-1.75,0.8,"drive");
-                robot.CARO.setPower(-0.2);
-                runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < 5.0)) {
-                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                    telemetry.update();
-                }
-                encoderDrive(1.5,0.8,"drive");
-                encoderDrive(45,0.8,"strafe");
-                fullTurn("counterclockwise");
-                encoderIARM(20,0.6);
-                encoderDrive(-14,0.8,"strafe");
+                encoderDrive(-5,0.6,"drive");
+                //fullTurn("counterclockwise");
+                encoderDrive(10,0.6,"strafe");
 
-
-
-                robot.DROPSERVO.setPosition(0.5);
-                robot.INTAKESERVO.setPower(1);
-                encoderDrive(7,0.8,"strafe");
-                robot.DROPSERVO.setPosition(-0.5);
-                robot.INTAKESERVO.setPower(-1);
-                encoderIARM(-20,0.6);
-                encoderDrive(55,0.8,"drive");
+//
 
 
             }
@@ -572,8 +552,8 @@ x         */
             //power = 0.9;
             robot.changeSpeed(power);
             if(inches>0) {
-                while (robot.FR.getTargetPosition()<robot.FR.getCurrentPosition()||
-                        robot.FL.getTargetPosition()>robot.FL.getCurrentPosition()||
+                while (robot.FR.getTargetPosition()>robot.FR.getCurrentPosition()||
+                        robot.FL.getTargetPosition()<robot.FL.getCurrentPosition()||
                         robot.BR.getTargetPosition()>robot.BR.getCurrentPosition()||
                         robot.BL.getTargetPosition()<robot.BL.getCurrentPosition()) {
                     telemetry.addData("Correction", correction);
@@ -583,9 +563,9 @@ x         */
                     currentPosInches = ((robot.FR.getCurrentPosition() - startPos1) / COUNTS_PER_INCH);
                     power = function.getPowerAt(currentPosInches, inches, pow, "strafe")*1.1;
                     robot.FL.setPower((power + correction));
-                    robot.BR.setPower((power - correction));
-                    robot.FR.setPower(-(power + correction));
-                    robot.BL.setPower(-(power - correction));             //STRAFE
+                    robot.BR.setPower((power + correction));
+                    robot.FR.setPower((power + correction));
+                    robot.BL.setPower((power + correction));             //STRAFE
                 }
             }
             else{

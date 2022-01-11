@@ -2,7 +2,7 @@
 package org.firstinspires.ftc.teamcode;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
- *
+ *Tel_GB
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
  * the following conditions are met:
@@ -75,14 +75,14 @@ public class Tel_GB extends LinearOpMode {
     }
 
     private ElapsedTime runtime = new ElapsedTime();
-
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
-    private DcMotor backRight = null;
     private DcMotor backLeft = null;
-    private DcMotor arm = null;
-    private DcMotor intake = null;
-    private Servo servoArm = null;
+    private DcMotor backRight = null;
+    private DcMotor intakeARM = null;
+    private CRServo intakeServo = null;
+    private Servo dropservo = null;
+    private DcMotor caro = null;
 
     boolean check = false;
     double i;
@@ -100,7 +100,8 @@ public class Tel_GB extends LinearOpMode {
         DcMotor motorBackRight = hardwareMap.dcMotor.get("br");
         DcMotor motorArm = hardwareMap.dcMotor.get("arm");
         DcMotor motorIntake = hardwareMap.dcMotor.get("intake");
-        servoArm = hardwareMap.get(Servo.class, "sa");
+        DcMotor motorCARO = hardwareMap.dcMotor.get("caro");
+        dropservo = hardwareMap.get(Servo.class, "sa");
 
         double leftPower;
         double rightPower;
@@ -112,7 +113,7 @@ public class Tel_GB extends LinearOpMode {
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        servoArm.setPosition(MAX_POS);
+        dropservo.setPosition(MAX_POS);
 
         waitForStart();
 
@@ -138,10 +139,10 @@ public class Tel_GB extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+            motorFrontLeft.setPower(frontLeftPower / 2);
+            motorBackLeft.setPower(backLeftPower / 2);
+            motorFrontRight.setPower(frontRightPower / 2);
+            motorBackRight.setPower(backRightPower / 2);
 
             leftPower = Range.clip(armC, -1.0, 1.0);
             //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
@@ -149,10 +150,10 @@ public class Tel_GB extends LinearOpMode {
             motorIntake.setPower(intakeC);
 
             if (intakeboxservoUP) {
-                servoArm.setPosition(MIN_POS);
+                dropservo.setPosition(MIN_POS);
             }
             if (intakeboxservoDN) {
-                servoArm.setPosition(MAX_POS);
+                dropservo.setPosition(MAX_POS);
             }
 
         }
