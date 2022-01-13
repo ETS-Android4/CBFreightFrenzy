@@ -53,9 +53,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
-@Autonomous(name="Blue_CARO_GB", group="Pushbot")
+@Autonomous(name="Blue_WH_GB", group="Pushbot")
 
-public class Blue_CARO_GB extends LinearOpMode
+public class Blue_WH_GB extends LinearOpMode
 {
 
     private static int valQUAD = -1;
@@ -315,28 +315,19 @@ x         */
             } else {
                 telemetry.addData("Left", "Duck");
                 //level 3
-                encoderDrive(12,0.4,"drive");
-                turn("clockwise", "half",80);
-                encoderDrive(20,0.4,"drive");
-                encoderDrive(3.75,0.4,"strafe");
-                robot.CARO.setPower(-0.2);
-                runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < 2.5)) {
-                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                    telemetry.update();
-                }
-                robot.CARO.setPower(0);
-                encoderDrive(-48,0.4,"drive");
-                turn("clockwise", "half",80);
-                encoderDrive(-7,0.4,"drive");
-                encoderIARM(19,0.4);
-                robot.servoArm.setPosition(0);
-                sleep(2000);
-                robot.servoArm.setPosition(1);
-                encoderDrive(7,0.4,"drive");
-                encoderIARM(-24.5,0.4);
-                encoderDrive(-50,0.4,"strafe");
-                encoderDrive(-22,0.4,"drive");
+                encoderDrive(5,0.4,"drive");
+               encoderDrive(20,0.4,"strafe");
+               turn("clockwise","full",165);
+               sleep(1000);
+                turn("counterclockwise","half",76);
+
+                encoderDrive(-16,0.2,"drive");
+                encoderDrive(5,0.2,"strafe");
+                encoderDrive(-38,0.4,"drive");
+                encoderDrive(-30,0.2,"strafe");
+                encoderDrive(-15,0.4,"drive");
+
+
 
 
 
