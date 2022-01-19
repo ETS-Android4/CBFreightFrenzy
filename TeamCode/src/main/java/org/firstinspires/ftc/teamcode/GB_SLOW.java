@@ -76,6 +76,7 @@ public class GB_SLOW extends LinearOpMode {
     double i;
     boolean check2 = false;
     static final double MAX_POS = 1.0;     // Maximum rotational position
+    static final double CEN_POS = 0.3;     // Minimum rotational position
     static final double MIN_POS = 0.0;     // Minimum rotational position
     double position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
@@ -114,12 +115,13 @@ public class GB_SLOW extends LinearOpMode {
             double caroPower1;
 
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
             double armC = -gamepad2.left_stick_y;
             double intakeC = -gamepad2.right_stick_y;
             boolean intakeboxservoUP = gamepad2.dpad_up;
             boolean intakeboxservoDN = gamepad2.dpad_down;
+            boolean intakeboxservoCEN = gamepad2.dpad_right;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -138,10 +140,10 @@ public class GB_SLOW extends LinearOpMode {
             caro.setPower(caroPower/1.20);
             caro.setPower(-caroPower1/1.2);
 
-            motorFrontLeft.setPower(frontLeftPower/2);
-            motorBackLeft.setPower(backLeftPower/2);
-            motorFrontRight.setPower(frontRightPower/2);
-            motorBackRight.setPower(backRightPower/2);
+            motorFrontLeft.setPower(frontLeftPower/1.5);
+            motorBackLeft.setPower(backLeftPower/1.5);
+            motorFrontRight.setPower(frontRightPower/1.5);
+            motorBackRight.setPower(backRightPower/1.5);
 
             leftPower = Range.clip(armC, -1.0, 1.0);
             //rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
@@ -168,6 +170,9 @@ public class GB_SLOW extends LinearOpMode {
             }
             if (intakeboxservoDN) {
                 servoArm.setPosition(MAX_POS);
+            }
+            if (intakeboxservoCEN) {
+                servoArm.setPosition(CEN_POS);
             }
 
         }
