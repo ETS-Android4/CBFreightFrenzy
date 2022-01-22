@@ -53,6 +53,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
+@Disabled
 @Autonomous(name="Blue_CARO_TR_PARKCLOSE", group="Pushbot")
 
 public class Blue_CARO_TR_PARKCLOSE extends LinearOpMode
@@ -241,7 +242,7 @@ x         */
                 encoderDrive(7.6,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
 
-                robot.CARO.setPower(-0.25);
+                robot.CARO.setPower(-0.35);
                 runtime.reset();
                 while (opModeIsActive() && (runtime.seconds() < 5.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -273,7 +274,7 @@ x         */
                 encoderDrive(7.6,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
 
-                robot.CARO.setPower(-0.25);
+                robot.CARO.setPower(-0.35);
                 runtime.reset();
                 while (opModeIsActive() && (runtime.seconds() < 5.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -307,7 +308,7 @@ x         */
                 encoderDrive(7.6,0.8,"drive");
                 encoderDrive(-23,0.8,"strafe");
 
-                robot.CARO.setPower(-0.25);
+                robot.CARO.setPower(-0.35);
                 runtime.reset();
                 while (opModeIsActive() && (runtime.seconds() < 5.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());

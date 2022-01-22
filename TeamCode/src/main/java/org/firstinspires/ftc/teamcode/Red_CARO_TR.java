@@ -55,6 +55,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 @Autonomous(name="Red_CARO_TR", group="Pushbot")
 
+@Disabled
 public class Red_CARO_TR extends LinearOpMode
 {
 
@@ -244,7 +245,7 @@ x         */
                 fullTurn("clockwise");
                 encoderDrive(-23,0.8,"drive");
                 encoderDrive(-1,0.8,"strafe");
-                robot.CARO.setPower(0.2);
+                robot.CARO.setPower(0.3);
                 runtime.reset();
                 while (opModeIsActive() && (runtime.seconds() < 4.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -284,7 +285,7 @@ x         */
                 fullTurn("clockwise");
                 encoderDrive(-23,0.8,"drive");
                 encoderDrive(-1,0.8,"strafe");
-                robot.CARO.setPower(0.2);
+                robot.CARO.setPower(0.3);
                 runtime.reset();
                 while (opModeIsActive() && (runtime.seconds() < 4.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -322,7 +323,7 @@ x         */
                 fullTurn("clockwise");
                 encoderDrive(-23,0.8,"drive");
                 encoderDrive(-1,0.8,"strafe");
-                robot.CARO.setPower(0.2);
+                robot.CARO.setPower(0.3);
                 runtime.reset();
                 while (opModeIsActive() && (runtime.seconds() < 4.0)) {
                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());

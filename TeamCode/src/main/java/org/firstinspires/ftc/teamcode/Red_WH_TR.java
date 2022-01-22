@@ -55,6 +55,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 @Autonomous(name="Red_WH_TR", group="Pushbot")
 
+@Disabled
 public class Red_WH_TR extends LinearOpMode {
 
     private static int valQUAD = -1;

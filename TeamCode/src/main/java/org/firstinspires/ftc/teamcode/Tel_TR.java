@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Tel_TR", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class Tel_TR extends OpMode {
     HardwareMecanum_TR robot = new HardwareMecanum_TR();
     // Declare OpMode members.

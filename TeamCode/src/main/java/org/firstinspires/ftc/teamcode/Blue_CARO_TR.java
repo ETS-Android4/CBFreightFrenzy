@@ -53,6 +53,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
+@Disabled
 @Autonomous(name="Blue_CARO_TR", group="Pushbot")
 
 public class Blue_CARO_TR extends LinearOpMode
