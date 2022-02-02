@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -75,9 +76,10 @@ public class GB_SLOW extends LinearOpMode {
     boolean check = false;
     double i;
     boolean check2 = false;
-    static final double MAX_POS = 1.0;     // Maximum rotational position
-    static final double CEN_POS = 0.3;     // Minimum rotational position
-    static final double MIN_POS = 0.0;     // Minimum rotational position
+    static final double MAX_POS = 1;     // Maximum rotational position
+    static final double CEN_POS = 0.5;     // Minimum rotational position
+    static final double MIN_POS = 0;
+    static final double INTAKE_POS = 0.85;  // Minimum rotational position
     double position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
     public void runOpMode() throws InterruptedException {
@@ -103,14 +105,13 @@ public class GB_SLOW extends LinearOpMode {
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        servoArm.setPosition(MAX_POS);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            //servoArm.setPosition(position);
+//            servoArm.setPosition(position);
             double caroPower;
             double caroPower1;
 
@@ -119,9 +120,11 @@ public class GB_SLOW extends LinearOpMode {
             double rx = gamepad1.right_stick_x;
             double armC = -gamepad2.left_stick_y;
             double intakeC = -gamepad2.right_stick_y;
-            boolean intakeboxservoUP = gamepad2.dpad_up;
-            boolean intakeboxservoDN = gamepad2.dpad_down;
-            boolean intakeboxservoCEN = gamepad2.dpad_right;
+            boolean intakeboxservoALDROP = gamepad2.dpad_up;
+            boolean intakeboxservoSHDROP = gamepad2.dpad_left;
+            boolean intakeboxservoHOLD = gamepad2.dpad_right;
+            boolean intakeboxservoDEFAULT = gamepad2.dpad_down;
+
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -165,16 +168,24 @@ public class GB_SLOW extends LinearOpMode {
                 motorBackRight.setPower(-1);
             }
 
-            if (intakeboxservoUP) {
+            if (intakeboxservoALDROP) {
                 servoArm.setPosition(MIN_POS);
             }
-            if (intakeboxservoDN) {
+            if (intakeboxservoSHDROP) {
                 servoArm.setPosition(MAX_POS);
             }
-            if (intakeboxservoCEN) {
+            if (intakeboxservoHOLD) {
                 servoArm.setPosition(CEN_POS);
             }
+            if (intakeboxservoDEFAULT) {
+                servoArm.setPosition(INTAKE_POS);
+            }
 
+            if (gamepad2.a)  {
+                double servoincreaser = 0;
+
+                servoArm.setPosition(servoincreaser + 0.1);
+            }
         }
     }
 }
