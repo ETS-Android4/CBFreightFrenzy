@@ -38,7 +38,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -72,6 +74,7 @@ public class GB_SLOW extends LinearOpMode {
     private DcMotor intake = null;
     private Servo servoArm = null;
     private DcMotor caro = null;
+    private RevColorSensorV3 freightSensor = null;
 
     boolean check = false;
     double i;
@@ -95,6 +98,8 @@ public class GB_SLOW extends LinearOpMode {
 
         servoArm = hardwareMap.get(Servo.class, "sa");
 
+        freightSensor = hardwareMap.get(RevColorSensorV3.class, "freightcolor");
+
         double leftPower;
         double rightPower;
 
@@ -104,7 +109,6 @@ public class GB_SLOW extends LinearOpMode {
         motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
 
         waitForStart();
 
@@ -125,7 +129,6 @@ public class GB_SLOW extends LinearOpMode {
             boolean intakeboxservoHOLD = gamepad2.dpad_right;
             boolean intakeboxservoDEFAULT = gamepad2.dpad_down;
 
-
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
@@ -136,7 +139,6 @@ public class GB_SLOW extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
             double caro1 = gamepad1.left_trigger;
             double caro2 = gamepad1.right_trigger;
-
 
             caroPower = Range.clip(caro1 + 0,-1.0,1);
             caroPower1 = Range.clip(caro2 + 0,-1.0,1);
@@ -186,6 +188,13 @@ public class GB_SLOW extends LinearOpMode {
 
                 servoArm.setPosition(servoincreaser + 0.1);
             }
+
+            telemetry.addData("Red - ", freightSensor.red());
+            telemetry.addData("Green - ", freightSensor.green());
+            telemetry.addData("Blue - ", freightSensor.blue());
+            telemetry.addData("Distance - ", freightSensor.getDistance(DistanceUnit.CM));
+            telemetry.update();
+
         }
     }
 }

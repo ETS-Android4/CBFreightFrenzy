@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 public class HardwareMecanum_GB {
     /* Public OpMode members. */
@@ -16,8 +17,6 @@ public class HardwareMecanum_GB {
     public DcMotor  IARM = null;
     public DcMotor INTAKESERVO = null;
     public Servo servoArm = null;
-
-
 
     /* local OpMode members. */
     HardwareMap hwMapG           =  null;
@@ -49,8 +48,6 @@ public class HardwareMecanum_GB {
         BR.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         BL.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
-
-
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -58,6 +55,8 @@ public class HardwareMecanum_GB {
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+
     public void changeMode(DcMotor.RunMode x) {
         FL.setMode(x);
         BL.setMode(x);
