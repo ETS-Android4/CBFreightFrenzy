@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -53,10 +54,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
-@Autonomous(name="Blue_WH_GB", group="Pushbot")
+@Autonomous(name="Red_CARO_FW_GB", group="Pushbot")
 
-
-public class Blue_WH_GB extends LinearOpMode
+public class Red_CARO_FW_GB extends LinearOpMode
 {
 
     private static int valQUAD = -1;
@@ -203,158 +203,206 @@ x         */
 
 //        if (!opModeIsActive());
 //        {
-            while (!opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null && updatedRecognitions.size() > 0) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+        while (!opModeIsActive()) {
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null && updatedRecognitions.size() > 0) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-                        // step through the list of recognitions and display boundary info.
-                        int i = 0;
-                        for (Recognition recognition : updatedRecognitions) {
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
 
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
-                            i++;
-                            rightPos = recognition.getRight();
-                        }
-
-                    } else {
-                        rightPos=0;
-                        telemetry.addData("No Object Detected","");
-
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                        i++;
+                        rightPos = recognition.getRight();
                     }
-                    telemetry.update();
-                    sleep(1000);
+
+                } else {
+                    rightPos=0;
+                    telemetry.addData("No Object Detected","");
 
                 }
+                telemetry.update();
+                sleep(1000);
 
             }
 
-            waitForStart();
-            telemetry.addData("Mode", "start pressed");
-            telemetry.update();
+        }
 
-//            Testing methods
-//            encoderDrive(12,0.4,"strafe");
-//            sleep(100);
-//            encoderDrive(32,0.4,"drive");
-//            sleep(100);
-//            encoderDrive(-34,0.5,"strafe");
-//            sleep(100);
-//            encoderDrive(-30,0.6,"drive");
-
-//            turn("counterclockwise", "full");
-//            sleep(300);
-//            turn("clockwise", "half");
-//            sleep(300);
-//            turn("counterclockwise", "half");
-
-//            encoderIARM(10, 0.35);
-//            robot.servoArm.setPosition(1.9);
-//            sleep(800);
-//            robot.servoArm.setPosition(0);
-//            encoderIARM(-10, 0.35);
+        waitForStart();
+        telemetry.addData("Mode", "start pressed");
+        telemetry.update();
 
 
-            if (rightPos < 500 && rightPos > 200) {
-                //level 3
 
-                encoderDrive(5,0.4,"drive");
-                encoderDrive(20,0.4,"strafe");
-                turn("clockwise","full",167);
-                sleep(1000);
-                // encoderDrive(5,0.4,"drive");
-                robot.servoArm.setPosition(0.5);
-                encoderIARM(23,0.6);
-                encoderDrive(-3.75, 0.4, "drive");
 
-                robot.servoArm.setPosition(0);
-                sleep(1000);
-
-                // Arm Code Here
-
-                encoderDrive(3.5, 0.4, "drive");
-                encoderIARM(-10,0.6);
-                robot.servoArm.setPosition(0.83);
-                encoderIARM(-13.5,0.6);
-                sleep(1000);
-                turn("counterclockwise","half",77);
-                sleep(1000);
-                encoderDrive(-16,0.28,"drive");
-                encoderDrive(11.5,0.28,"strafe");
-                encoderDrive(-30,0.5,"drive");
-                encoderDrive(-28,0.28,"strafe");
-                encoderDrive(-20,0.4,"drive");
+        if (rightPos < 500 && rightPos > 150) {
+            //level 3
+            telemetry.addData("Left", "Duck");
 //
-
-
-            } else if (rightPos > 450) {
-                //Level 2
-                telemetry.addData("Middle", "Duck");
-                encoderDrive(5,0.4,"drive");
-                encoderDrive(20,0.4,"strafe");
-                turn("clockwise","full",167);
-                sleep(1000);
-                // encoderDrive(5,0.4,"drive");
-                robot.servoArm.setPosition(0.5);
-                encoderIARM(19,0.6);
-                encoderDrive(-6.4, 0.4, "drive");
-
-                robot.servoArm.setPosition(0);
-                sleep(1000);
-
-                // Arm Code Here
-
-                encoderDrive(4.5, 0.4, "drive");
-                encoderIARM(-7,0.6);
-                robot.servoArm.setPosition(0.83);
-                encoderIARM(-12,0.6);
-                sleep(1000);
-                turn("counterclockwise","half",77);
-                sleep(1000);
-                encoderDrive(-16,0.28,"drive");
-                encoderDrive(11.5,0.28,"strafe");
-                encoderDrive(-30,0.5,"drive");
-                encoderDrive(-28,0.28,"strafe");
-                encoderDrive(-20,0.4,"drive");
-
-
-            } else {
-                telemetry.addData("Left", "Duck");
-                //level 3
-                encoderDrive(5,0.4,"drive");
-               encoderDrive(20,0.4,"strafe");
-               turn("clockwise","full",167);
-               sleep(1000);
-                encoderIARM(14.5,0.6);
-                encoderDrive(-10, 0.6, "drive");
-
-                robot.servoArm.setPosition(0);
-                sleep(1000);
-                // ARM CODE HERE
-
-                encoderDrive(10, 0.4, "drive");
-                encoderIARM(-7.5,0.6);
-                robot.servoArm.setPosition(0.85);
-                encoderIARM(-7,0.6);
-               // Arm code here
-
-                turn("counterclockwise","half",76);
-                sleep(1000);
-                encoderDrive(-16,0.28,"drive");
-                encoderDrive(11.5,0.28,"strafe");
-                encoderDrive(-30,0.5 ,"drive");
-                encoderDrive(-28,0.28,"strafe");
-                encoderDrive(-20,0.4,"drive");
-
+            encoderDrive(11, 0.4, "drive");
+            turn("clockwise", "full", 130);
+            sleep(400);
+            encoderDrive(12, 0.4, "strafe");
+            encoderDrive(-7, 0.4, "drive");
+            while  (robot.sensorRange.getDistance(DistanceUnit.INCH)>11) {
+                robot.FL.setPower((0.15));
+                robot.BR.setPower((0.15));
+                robot.FR.setPower(-(0.15));
+                robot.BL.setPower(-(0.15));
             }
-      //  }
+            robot.FL.setPower(0);
+            robot.BR.setPower(0);
+            robot.FR.setPower(0);
+            robot.BL.setPower(0);
+            robot.CARO.setPower(0.26);
+            sleep(3500);
+            encoderDrive(-2, 0.6, "strafe");
+            robot.CARO.setPower(0);
+            turn("clockwise", "full", 115);
+            encoderDrive(32, 0.4, "strafe");
+            robot.servoArm.setPosition(0.5);
+            encoderIARM(23.5,0.6);
+            encoderDrive(-19.75, 0.6, "drive");
+
+
+            robot.servoArm.setPosition(0);
+            sleep(1000);
+
+            // Arm Code Here
+
+            encoderDrive(3.2, 0.4, "drive");
+            encoderIARM(-9.75,0.6);
+            robot.servoArm.setPosition(0.85);
+            encoderIARM(-10.75,0.6);
+
+            encoderDrive(12, 0.75, "drive");
+            encoderDrive(-30.5, 0.7, "strafe");
+            encoderDrive(-50, 0.82, "drive");
+            encoderDrive(-7, 0.7, "strafe");
+            encoderDrive(-45, 0.82, "drive");
+
+
+
+
+
+
+
+        } else if (rightPos > 520) {
+            //Level 2
+            telemetry.addData("Middle", "Duck");
+//
+            encoderDrive(11, 0.4, "drive");
+            turn("clockwise", "full", 130);
+            sleep(400);
+            encoderDrive(12, 0.4, "strafe");
+            encoderDrive(-7, 0.4, "drive");
+            while  (robot.sensorRange.getDistance(DistanceUnit.INCH)>11) {
+                robot.FL.setPower((0.15));
+                robot.BR.setPower((0.15));
+                robot.FR.setPower(-(0.15));
+                robot.BL.setPower(-(0.15));
+            }
+            robot.FL.setPower(0);
+            robot.BR.setPower(0);
+            robot.FR.setPower(0);
+            robot.BL.setPower(0);
+            robot.CARO.setPower(0.26);
+            sleep(3500);
+            encoderDrive(-2, 0.6, "strafe");
+            robot.CARO.setPower(0);
+            turn("clockwise", "full", 115);
+            encoderDrive(32.4, 0.4, "strafe");
+            robot.servoArm.setPosition(0.5);
+            encoderIARM(18.4,0.6);
+            encoderDrive(-21, 0.6, "drive");
+
+
+            robot.servoArm.setPosition(0);
+            sleep(1000);
+
+// Arm Code Here
+
+            encoderDrive(2, 0.4, "drive");
+            encoderIARM(-8.75,0.6);
+            robot.servoArm.setPosition(0.85);
+            encoderIARM(-8.75,0.6);
+            encoderDrive(10, 0.75, "drive");
+            encoderDrive(-29.5, 0.7, "strafe");
+            encoderDrive(-50, 0.82, "drive");
+            encoderDrive(-5, 0.7, "strafe");
+            encoderDrive(-44, 0.82, "drive");
+
+
+
+
+
+        } else {
+            telemetry.addData("Right", "Duck");
+
+            encoderDrive(11, 0.4, "drive");
+            turn("clockwise", "full", 130);
+            sleep(400);
+            encoderDrive(12, 0.4, "strafe");
+            encoderDrive(-7, 0.4, "drive");
+            while  (robot.sensorRange.getDistance(DistanceUnit.INCH)>11) {
+                robot.FL.setPower((0.15));
+                robot.BR.setPower((0.15));
+                robot.FR.setPower(-(0.15));
+                robot.BL.setPower(-(0.15));
+            }
+            robot.FL.setPower(0);
+            robot.BR.setPower(0);
+            robot.FR.setPower(0);
+            robot.BL.setPower(0);
+            robot.CARO.setPower(0.26);
+            sleep(3500);
+            encoderDrive(-2, 0.6, "strafe");
+            robot.CARO.setPower(0);
+            turn("clockwise", "full", 115);
+            encoderDrive(32.4, 0.4, "strafe");
+
+            encoderDrive(-26, 0.6, "drive");
+            encoderIARM(14.5,0.6);
+
+            robot.servoArm.setPosition(0);
+            sleep(700);
+
+// Arm Code Here
+
+            encoderDrive(12, 0.4, "drive");
+            encoderIARM(-7,0.6);
+            robot.servoArm.setPosition(0.85);
+            encoderIARM(-7.5,0.6);
+            encoderDrive(12, 0.75, "drive");
+            encoderDrive(-29.5, 0.7, "strafe");
+            encoderDrive(-50, 0.82, "drive");
+            encoderDrive(-5, 0.7, "strafe");
+            encoderDrive(-40, 0.82, "drive");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+        //  }
         vuforia.close();
         tfod.shutdown();
     }
@@ -569,6 +617,8 @@ x         */
             robot.changeSpeed(0);
         }
         else if(driveMode.equals("strafe")){/////LEFT IS POSITIVE
+            robot.changeMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.changeMode(DcMotor.RunMode.RUN_USING_ENCODER);
             pidDrive.setSetpoint(0);
             pidDrive.setOutputRange(0, power);
             pidDrive.setInputRange(-90, 90);

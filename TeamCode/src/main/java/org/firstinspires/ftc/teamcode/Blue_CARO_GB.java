@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -32,6 +33,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -53,7 +55,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 //import static org.firstinspires.ftc.teamcode.WebcamTest.VUFORIA_KEY;
 
-@Autonomous(name="Blue_CARO_GB", group="Pushbot")
+@Autonomous(name="Blue_CARO_SA_GB", group="Pushbot")
 
 public class Blue_CARO_GB extends LinearOpMode
 {
@@ -240,6 +242,10 @@ x         */
             telemetry.addData("Mode", "start pressed");
             telemetry.update();
 
+
+
+
+        telemetry.update();
 //            Testing methods
 //            encoderDrive(12,0.4,"strafe");
 //            sleep(100);
@@ -263,82 +269,116 @@ x         */
 
 
             if (rightPos < 500 && rightPos > 250) {
-                encoderDrive(4.7,0.4,"drive");
 
-                encoderDrive(20,0.5,"turn");
-                sleep(1000);
-                robot.CARO.setPower(-0.22);
+                encoderDrive(12,0.4,"drive");
 
-                encoderDrive(28,0.35,"drive");
-                sleep(3000);
+                encoderDrive(18.5,0.4,"turn");
+
+                encoderDrive(29,0.4,"drive");
+                while  (robot.sensorRange.getDistance(DistanceUnit.INCH)>10.78) {
+                    robot.FL.setPower((0.15));
+                    robot.BR.setPower((0.15));
+                    robot.FR.setPower(-(0.15));
+                    robot.BL.setPower(-(0.15));
+                }
+                robot.FL.setPower(0);
+                robot.BR.setPower(0);
+                robot.FR.setPower(0);
+                robot.BL.setPower(0);
+                robot.CARO.setPower(-0.25);
+
+
+                sleep(4000);
                 robot.CARO.setPower(0);
-
-
-
-                encoderDrive(-53.5,0.4,"drive");
-                encoderDrive(20,0.5,"turn");
-                encoderIARM(25,0.4);
+                encoderDrive(-29.8,0.5,"strafe");
+                encoderIARM(23,0.4);
                 robot.servoArm.setPosition(0.5);
-                encoderDrive(-4,0.35,"drive");
-                sleep(1000);
+                encoderDrive(-24.25,0.4,"drive");
+
                 robot.servoArm.setPosition(0);
                 sleep(1000);
+                encoderIARM(-13,0.4);
+                robot.servoArm.setPosition(0.83);
 
-                encoderDrive(2,0.4,"drive");
-                encoderIARM(-23,0.4);
-                encoderDrive(-57,0.4,"strafe");
-                encoderDrive(-22,0.4,"drive");
+                encoderIARM(-10,0.4);
+                encoderDrive(19,0.6,"drive");
+                encoderDrive(12,0.6,"strafe");
 
             } else if (rightPos > 520) {
-                encoderDrive(4.9,0.4,"drive");
 
-                encoderDrive(20,0.5,"turn");
-                sleep(1000);
-                robot.CARO.setPower(-0.22);
-                encoderDrive(28,0.35,"drive");
+                encoderDrive(12,0.4,"drive");
+
+                encoderDrive(18.5,0.4,"turn");
+
+                encoderDrive(29,0.4,"drive");
+                while  (robot.sensorRange.getDistance(DistanceUnit.INCH)>10.78) {
+                    robot.FL.setPower((0.15));
+                    robot.BR.setPower((0.15));
+                    robot.FR.setPower(-(0.15));
+                    robot.BL.setPower(-(0.15));
+                }
+                robot.FL.setPower(0);
+                robot.BR.setPower(0);
+                robot.FR.setPower(0);
+                robot.BL.setPower(0);
+                robot.CARO.setPower(-0.25);
 
 
-                sleep(3000);
+                sleep(4000);
                 robot.CARO.setPower(0);
-                encoderDrive(-53.5,0.4,"drive");
-                encoderDrive(20,0.5,"turn");
+                encoderDrive(-29.8,0.5,"strafe");
                 encoderIARM(19.5,0.4);
                 robot.servoArm.setPosition(0.5);
-                encoderDrive(-8,0.35,"drive");
+                encoderDrive(-30, 0.4, "drive");
+
 
                 robot.servoArm.setPosition(0);
 
                 sleep(2000);
                 encoderDrive(6,0.4,"drive");
-                encoderIARM(-19.5,0.4);
-                encoderDrive(-57,0.4,"strafe");
-                encoderDrive(-22,0.4,"drive");
+
+                encoderIARM(-10.5,0.6);
+                robot.servoArm.setPosition(0.83);
+                encoderIARM(-7,0.6);
+                encoderDrive(19,0.6,"drive");
+                encoderDrive(12,0.6,"strafe");
+
+
 
             } else {
-                encoderDrive(5.4,0.4,"drive");
 
-                encoderDrive(20,0.5,"turn");
-                sleep(1000);
-                robot.CARO.setPower(-0.22);
-                encoderDrive(28,0.35,"drive");
+                encoderDrive(12,0.4,"drive");
+
+                encoderDrive(18.5,0.4,"turn");
+
+                encoderDrive(29,0.4,"drive");
+                while  (robot.sensorRange.getDistance(DistanceUnit.INCH)>10.78) {
+                    robot.FL.setPower((0.15));
+                    robot.BR.setPower((0.15));
+                    robot.FR.setPower(-(0.15));
+                    robot.BL.setPower(-(0.15));
+                }
+                robot.FL.setPower(0);
+                robot.BR.setPower(0);
+                robot.FR.setPower(0);
+                robot.BL.setPower(0);
+                robot.CARO.setPower(-0.25);
 
 
-
-               sleep(3000);
+               sleep(4000);
                 robot.CARO.setPower(0);
-                encoderDrive(-53.5,0.4,"drive");
-                encoderDrive(20,0.5,"turn");
+                encoderDrive(-29.8,0.5,"strafe");
+                encoderDrive(-30, 0.4, "drive");
                 encoderIARM(14.5,0.4);
-                encoderDrive(-11,0.35,"drive");
-
                 robot.servoArm.setPosition(0);
                 sleep(2000);
-                robot.servoArm.setPosition(1);
-                sleep(2000);
-                encoderDrive(8,0.4,"drive");
-                encoderIARM(-14.5,0.4);
-                encoderDrive(-57,0.4,"strafe");
-                encoderDrive(-22,0.4,"drive");
+
+                encoderDrive(8,0.5,"drive");
+                encoderIARM(-7,0.4);
+                robot.servoArm.setPosition(0.83);
+                encoderIARM(-7.5,0.4);
+                encoderDrive(19,0.6,"drive");
+                encoderDrive(12,0.6,"strafe");
 
 
 

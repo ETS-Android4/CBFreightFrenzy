@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +19,7 @@ public class HardwareMecanum_GB {
     public DcMotor  IARM = null;
     public DcMotor INTAKESERVO = null;
     public Servo servoArm = null;
-
+    public DistanceSensor sensorRange = null;
     /* local OpMode members. */
     HardwareMap hwMapG           =  null;
     private ElapsedTime period  = new ElapsedTime();
@@ -33,7 +35,7 @@ public class HardwareMecanum_GB {
         hwMapG = ahwMap;
 
         // Define and Initialize Motors
-
+        sensorRange = hwMapG.get(DistanceSensor.class, "sensorrange");
         FR = hwMapG.get(DcMotor.class, "fr");
         FL = hwMapG.get(DcMotor.class, "fl");
         BR = hwMapG.get(DcMotor.class, "br");
